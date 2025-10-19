@@ -1,0 +1,167 @@
+.appShell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 40%),
+    radial-gradient(circle at bottom right, rgba(236, 72, 153, 0.08), transparent 45%),
+    var(--background);
+  color: var(--foreground);
+}
+
+.topNav {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  padding: 20px 32px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+  backdrop-filter: blur(6px);
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.brandName {
+  font-size: clamp(20px, 2.4vw, 26px);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.brandVersion {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(30, 41, 59, 0.6);
+  background: rgba(148, 163, 184, 0.18);
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+
+.navLinks {
+  display: flex;
+  gap: 12px;
+  justify-self: end;
+}
+
+.navNotification {
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.navNotification span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  max-width: 520px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow:
+    0 10px 20px rgba(15, 23, 42, 0.12),
+    0 4px 10px rgba(15, 23, 42, 0.08);
+}
+
+.navNotificationSuccess {
+  background: rgba(16, 185, 129, 0.16);
+  color: rgba(4, 120, 87, 0.95);
+}
+
+.navNotificationError {
+  background: rgba(248, 113, 113, 0.2);
+  color: rgba(153, 27, 27, 0.95);
+}
+
+.link,
+.activeLink {
+  appearance: none;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  background: transparent;
+  color: rgba(30, 41, 59, 0.7);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.link:hover {
+  background: rgba(148, 163, 184, 0.18);
+  color: rgba(30, 41, 59, 0.9);
+}
+
+.activeLink {
+  background: rgba(37, 99, 235, 0.16);
+  color: rgba(37, 99, 235, 1);
+}
+
+.mainContent {
+  flex: 1 1 auto;
+  padding: 24px 40px 48px;
+}
+
+.centerPane {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(236, 72, 153, 0.08));
+}
+
+.loading {
+  font-size: 18px;
+  font-weight: 600;
+  color: rgba(30, 41, 59, 0.8);
+}
+
+.errorCard {
+  border-radius: 18px;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 32px 28px;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: rgba(220, 38, 38, 0.95);
+  text-align: center;
+}
+
+.errorCard h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.errorCard p {
+  color: rgba(30, 41, 59, 0.75);
+}
+
+.errorCard button {
+  align-self: center;
+  appearance: none;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  border-radius: 10px;
+  padding: 8px 16px;
+  background: rgba(241, 245, 249, 0.6);
+  color: rgba(30, 41, 59, 0.85);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.errorCard button:hover {
+  background: rgba(148, 163, 184, 0.2);
+}

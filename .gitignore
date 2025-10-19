@@ -1,0 +1,53 @@
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Go build artifacts & coverage
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+*.log
+coverage.*
+
+# Wails build outputs
+build/bin/
+.wails-template/
+.wails/
+dist/
+
+# Node / frontend tooling
+node_modules/
+frontend/node_modules/
+legacy_next_app/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.eslintcache
+frontend/.tsbuildinfo
+frontend/package.json.md5
+package-lock.json.md5
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnp.*
+
+# Next.js artefacts (legacy app)
+.next/
+legacy_next_app/.next/
+legacy_next_app/out/
+
+# Cache directories
+.cache
+.turbo
+
+# Editor & OS metadata
+.vscode/
+.idea/
+.fleet/
+.history/

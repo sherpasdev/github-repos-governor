@@ -1,0 +1,136 @@
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.card {
+  border-radius: 20px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow:
+    0 18px 40px rgba(15, 23, 42, 0.08),
+    0 6px 16px rgba(15, 23, 42, 0.05);
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: clamp(26px, 4vw, 34px);
+  font-weight: 600;
+}
+
+.header p {
+  margin: 0;
+  color: rgba(71, 85, 105, 0.8);
+  font-size: 14px;
+}
+
+.formGrid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formGroup label {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(71, 85, 105, 0.85);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.formGroup input {
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  padding: 10px 14px;
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.formGroup input:disabled {
+  background: rgba(241, 245, 249, 0.8);
+  color: rgba(100, 116, 139, 0.8);
+}
+
+.checkboxRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.checkboxRow label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: rgba(71, 85, 105, 0.9);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.primaryButton,
+.secondaryButton {
+  appearance: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 10px 20px;
+  cursor: pointer;
+  border: none;
+}
+
+.primaryButton {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 1), rgba(59, 130, 246, 0.9));
+  color: #fff;
+  box-shadow:
+    0 12px 24px rgba(37, 99, 235, 0.25),
+    0 4px 12px rgba(37, 99, 235, 0.18);
+}
+
+.primaryButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.secondaryButton {
+  background: rgba(226, 232, 240, 0.6);
+  color: rgba(71, 85, 105, 0.9);
+}
+
+.errorBanner {
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: rgba(248, 113, 113, 0.18);
+  color: rgba(153, 27, 27, 0.95);
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  font-size: 13px;
+}
+
+.infoFooter {
+  font-size: 13px;
+  color: rgba(100, 116, 139, 0.85);
+}
