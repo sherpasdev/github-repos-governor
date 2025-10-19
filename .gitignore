@@ -5,6 +5,8 @@ Thumbs.db
 .env
 .env.*
 !.env.example
+config/config.json
+config/config.local.json
 
 # Go build artifacts & coverage
 *.exe
@@ -51,3 +53,6 @@ legacy_next_app/out/
 .idea/
 .fleet/
 .history/
+
+# Misc generated
+*.orig

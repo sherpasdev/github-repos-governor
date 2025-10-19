@@ -1,0 +1,7 @@
+{
+  "githubToken": "YOUR_GITHUB_TOKEN",
+  "githubOrg": "your-org",
+  "githubApiBaseUrl": "https://api.github.com",
+  "disableCache": false,
+  "cacheDir": ".cache"
+}
