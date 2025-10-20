@@ -22,13 +22,13 @@ coverage.*
 build/bin/
 .wails-template/
 .wails/
-dist/
+/dist/
 
 # Node / frontend tooling
 node_modules/
 frontend/node_modules/
 legacy_next_app/node_modules/
-frontend/dist/
+frontend/dist/*
 !frontend/dist/.gitkeep
 frontend/.vite/
 frontend/.eslintcache
