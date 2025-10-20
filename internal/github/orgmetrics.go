@@ -531,20 +531,20 @@ func (c *Client) BuildOrganizationSnapshot(ctx context.Context, repos []Reposito
 
 		protectionMap[repo.ID] = BranchProtectionInfo{State: "unknown", Details: emptyBranchProtection(false)}
 		repoPolicies = append(repoPolicies, models.RepoPolicySnapshot{
-			ID:                  repo.ID,
-			Name:                repo.Name,
-			FullName:            repo.FullName,
-			HTMLURL:             repo.HTMLURL,
-			DefaultBranch:       repo.DefaultBranch,
-			DefaultBranchPushedAt: selectString(detail.PushedAt, repo.PushedAt),
+			ID:                      repo.ID,
+			Name:                    repo.Name,
+			FullName:                repo.FullName,
+			HTMLURL:                 repo.HTMLURL,
+			DefaultBranch:           repo.DefaultBranch,
+			DefaultBranchPushedAt:   selectString(detail.PushedAt, repo.PushedAt),
 			AdvancedSecurityEnabled: selectBoolFromSecurity(detail.SecurityAndAnalysis, repo.SecurityAndAnalysis),
 			AdvancedSecurityStatus:  selectSecurityStatus(detail.SecurityAndAnalysis, repo.SecurityAndAnalysis, advancedSecurityExtractor{}),
-			DependencyGraphEnabled: selectDependencyGraph(detail.SecurityAndAnalysis, repo.SecurityAndAnalysis),
-			DependencyGraphStatus:  selectSecurityStatus(detail.SecurityAndAnalysis, repo.SecurityAndAnalysis, dependencyGraphExtractor{}),
-			BranchProtection:    emptyBranchProtection(false),
-			DeleteBranchOnMerge: selectBool(detail.DeleteBranchOnMerge, repo.DeleteBranchOnMerge),
-			AllowAutoMerge:      selectBool(detail.AllowAutoMerge, repo.AllowAutoMerge),
-			AllowUpdateBranch:   selectBool(detail.AllowUpdateBranch, repo.AllowUpdateBranch),
+			DependencyGraphEnabled:  selectDependencyGraph(detail.SecurityAndAnalysis, repo.SecurityAndAnalysis),
+			DependencyGraphStatus:   selectSecurityStatus(detail.SecurityAndAnalysis, repo.SecurityAndAnalysis, dependencyGraphExtractor{}),
+			BranchProtection:        emptyBranchProtection(false),
+			DeleteBranchOnMerge:     selectBool(detail.DeleteBranchOnMerge, repo.DeleteBranchOnMerge),
+			AllowAutoMerge:          selectBool(detail.AllowAutoMerge, repo.AllowAutoMerge),
+			AllowUpdateBranch:       selectBool(detail.AllowUpdateBranch, repo.AllowUpdateBranch),
 		})
 	}
 

@@ -71,10 +71,10 @@ func TestRepoPolicySecurityFallback(t *testing.T) {
 		t.Fatalf("expected advanced security false, got %v", advanced)
 	}
 
-    depGraph := selectDependencyGraph(detail.SecurityAndAnalysis, repo.SecurityAndAnalysis)
-    if depGraph != nil {
-        t.Fatalf("expected dependency graph unknown (nil), got %v", depGraph)
-    }
+	depGraph := selectDependencyGraph(detail.SecurityAndAnalysis, repo.SecurityAndAnalysis)
+	if depGraph != nil {
+		t.Fatalf("expected dependency graph unknown (nil), got %v", depGraph)
+	}
 
 	status := selectSecurityStatus(detail.SecurityAndAnalysis, repo.SecurityAndAnalysis, advancedSecurityExtractor{})
 	if status == nil || *status != "disabled_by_org_policy" {

@@ -94,20 +94,20 @@ type BranchProtectionSnapshot struct {
 }
 
 type RepoPolicySnapshot struct {
-	ID                  int64                    `json:"id"`
-	Name                string                   `json:"name"`
-	FullName            string                   `json:"fullName"`
-	HTMLURL             string                   `json:"htmlUrl"`
-	DefaultBranch       string                   `json:"defaultBranch"`
-	DefaultBranchPushedAt *string                 `json:"defaultBranchPushedAt"`
-	AdvancedSecurityEnabled *bool                 `json:"advancedSecurityEnabled"`
-	AdvancedSecurityStatus *string                `json:"advancedSecurityStatus"`
-	DependencyGraphEnabled *bool                  `json:"dependencyGraphEnabled"`
-	DependencyGraphStatus *string                 `json:"dependencyGraphStatus"`
-	BranchProtection    BranchProtectionSnapshot `json:"branchProtection"`
-	DeleteBranchOnMerge *bool                    `json:"deleteBranchOnMerge"`
-	AllowAutoMerge      *bool                    `json:"allowAutoMerge"`
-	AllowUpdateBranch   *bool                    `json:"allowUpdateBranch"`
+	ID                      int64                    `json:"id"`
+	Name                    string                   `json:"name"`
+	FullName                string                   `json:"fullName"`
+	HTMLURL                 string                   `json:"htmlUrl"`
+	DefaultBranch           string                   `json:"defaultBranch"`
+	DefaultBranchPushedAt   *string                  `json:"defaultBranchPushedAt"`
+	AdvancedSecurityEnabled *bool                    `json:"advancedSecurityEnabled"`
+	AdvancedSecurityStatus  *string                  `json:"advancedSecurityStatus"`
+	DependencyGraphEnabled  *bool                    `json:"dependencyGraphEnabled"`
+	DependencyGraphStatus   *string                  `json:"dependencyGraphStatus"`
+	BranchProtection        BranchProtectionSnapshot `json:"branchProtection"`
+	DeleteBranchOnMerge     *bool                    `json:"deleteBranchOnMerge"`
+	AllowAutoMerge          *bool                    `json:"allowAutoMerge"`
+	AllowUpdateBranch       *bool                    `json:"allowUpdateBranch"`
 }
 
 type GovernanceSnapshot struct {
