@@ -58,7 +58,7 @@ func (c *Client) buildURL(path string, params url.Values) (string, error) {
 	if !strings.HasPrefix(path, "/") {
 		path = "/" + path
 	}
-	if params == nil || len(params) == 0 {
+	if len(params) == 0 {
 		return base + path, nil
 	}
 	return base + path + "?" + params.Encode(), nil
@@ -102,7 +102,9 @@ func (c *Client) doRequest(ctx context.Context, method, path string, params url.
 	}
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		defer resp.Body.Close()
+		defer func() {
+			_ = resp.Body.Close()
+		}()
 		data, _ := io.ReadAll(resp.Body)
 		return nil, &RequestError{
 			Status: resp.StatusCode,
@@ -114,7 +116,9 @@ func (c *Client) doRequest(ctx context.Context, method, path string, params url.
 }
 
 func decodeResponse[T any](resp *http.Response) (T, map[string][]string, error) {
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 	var out T
 	if resp.ContentLength == 0 {
 		return out, resp.Header, nil

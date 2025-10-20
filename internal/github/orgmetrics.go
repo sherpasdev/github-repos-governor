@@ -837,34 +837,3 @@ func normalizeStatus(status string) string {
 		return ""
 	}
 }
-
-func describeStatus(status string) string {
-	trimmed := strings.TrimSpace(status)
-	if trimmed == "" {
-		return ""
-	}
-	lower := strings.ToLower(trimmed)
-	var base string
-	var detail string
-	switch {
-	case strings.HasPrefix(lower, "enabled"):
-		base = "enabled"
-		detail = strings.TrimPrefix(lower, "enabled")
-	case strings.HasPrefix(lower, "disabled"):
-		base = "disabled"
-		detail = strings.TrimPrefix(lower, "disabled")
-	case strings.HasPrefix(lower, "not_available"):
-		return "not_available"
-	case strings.HasPrefix(lower, "not_supported") || strings.HasPrefix(lower, "unsupported"):
-		return "not_supported"
-	case strings.HasPrefix(lower, "required"):
-		return "required"
-	default:
-		return trimmed
-	}
-	detail = strings.Trim(detail, " _")
-	if detail == "" {
-		return base
-	}
-	return base + " (" + detail + ")"
-}
