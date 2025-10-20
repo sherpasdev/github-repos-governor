@@ -99,6 +99,11 @@ type RepoPolicySnapshot struct {
 	FullName            string                   `json:"fullName"`
 	HTMLURL             string                   `json:"htmlUrl"`
 	DefaultBranch       string                   `json:"defaultBranch"`
+	DefaultBranchPushedAt *string                 `json:"defaultBranchPushedAt"`
+	AdvancedSecurityEnabled *bool                 `json:"advancedSecurityEnabled"`
+	AdvancedSecurityStatus *string                `json:"advancedSecurityStatus"`
+	DependencyGraphEnabled *bool                  `json:"dependencyGraphEnabled"`
+	DependencyGraphStatus *string                 `json:"dependencyGraphStatus"`
 	BranchProtection    BranchProtectionSnapshot `json:"branchProtection"`
 	DeleteBranchOnMerge *bool                    `json:"deleteBranchOnMerge"`
 	AllowAutoMerge      *bool                    `json:"allowAutoMerge"`

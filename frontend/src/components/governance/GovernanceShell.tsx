@@ -306,7 +306,7 @@ export function GovernanceShell({
       <div className={styles.emptyState}>
         <h2>Configuration required</h2>
         <p>
-          Provide the required values in <code>{configTarget}</code> and restart the app.
+          Provide the required values via the Settings tab. They will be saved to <code>{configTarget}</code>.
           {missingFields.length > 0 ? (
             <> Missing keys: {missingFields.join(", ")}.</>
           ) : (

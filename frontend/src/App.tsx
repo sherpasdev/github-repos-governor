@@ -28,17 +28,27 @@ export default function App() {
   const [detailLoading, setDetailLoading] = useState(false);
   const [detailError, setDetailError] = useState<string | null>(null);
   const [notification, setNotification] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [missingFields, setMissingFields] = useState<string[]>([]);
+
+  const refreshEnvironment = useCallback(async () => {
+    try {
+      const status = await fetchEnvironmentStatus();
+      setEnv(status);
+      setEnvError(status.loadError ?? null);
+      setMissingFields(status.missing ?? []);
+      if ((status.missing?.length ?? 0) > 0 && view !== "repo-detail" && view !== "settings") {
+        setView("settings");
+      }
+      return status;
+    } catch (error) {
+      setEnvError((error as Error).message);
+      return null;
+    }
+  }, [view]);
 
   useEffect(() => {
-    fetchEnvironmentStatus()
-      .then((status) => {
-        setEnv(status);
-        setEnvError(status.loadError ?? null);
-      })
-      .catch((error: Error) => {
-        setEnvError(error.message);
-      });
-  }, []);
+    void refreshEnvironment();
+  }, [refreshEnvironment]);
 
   const handleSelectRepository = (repoName: string) => {
     setView("repo-detail");
@@ -73,15 +83,16 @@ export default function App() {
   }, [notification]);
 
   const handleSettingsSaved = useCallback(() => {
-    fetchEnvironmentStatus()
-      .then((status) => {
-        setEnv(status);
-        setEnvError(status.loadError ?? null);
-      })
-      .catch((error: Error) => {
-        setEnvError(error.message);
-      });
-  }, []);
+    void refreshEnvironment().then((status) => {
+      if (status?.ready) {
+        setView("repositories");
+        setNotification({
+          type: "success",
+          message: "Configuration saved.",
+        });
+      }
+    });
+  }, [refreshEnvironment]);
 
   const renderContent = () => {
     if (!env) {
@@ -136,7 +147,13 @@ export default function App() {
           />
         );
       case "settings":
-        return <SettingsView onNotify={handleNotify} onSaved={handleSettingsSaved} />;
+        return (
+          <SettingsView
+            onNotify={handleNotify}
+            onSaved={handleSettingsSaved}
+            missingKeys={missingFields}
+          />
+        );
       case "dashboard":
       default:
         return (

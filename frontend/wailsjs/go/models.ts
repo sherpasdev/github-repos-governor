@@ -198,30 +198,6 @@ export namespace main {
 	        this.version = source["version"];
 	    }
 	}
-	export class SettingsPayload {
-	    githubToken: string;
-	    githubOrg: string;
-	    githubApiBaseUrl: string;
-	    disableCache: boolean;
-	    cacheDir: string;
-	    ignoreArchived: boolean;
-	    configPath: string;
-	
-	    static createFrom(source: any = {}) {
-	        return new SettingsPayload(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.githubToken = source["githubToken"];
-	        this.githubOrg = source["githubOrg"];
-	        this.githubApiBaseUrl = source["githubApiBaseUrl"];
-	        this.disableCache = source["disableCache"];
-	        this.cacheDir = source["cacheDir"];
-	        this.ignoreArchived = source["ignoreArchived"];
-	        this.configPath = source["configPath"];
-	    }
-	}
 	export class RefreshSummaryResponse {
 	    summary: models.RepoSnapshot;
 	    count: number;
@@ -436,6 +412,30 @@ export namespace main {
 		    }
 		    return a;
 		}
+	}
+	export class SettingsPayload {
+	    githubToken: string;
+	    githubOrg: string;
+	    githubApiBaseUrl: string;
+	    disableCache: boolean;
+	    cacheDir: string;
+	    ignoreArchived: boolean;
+	    configPath: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new SettingsPayload(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.githubToken = source["githubToken"];
+	        this.githubOrg = source["githubOrg"];
+	        this.githubApiBaseUrl = source["githubApiBaseUrl"];
+	        this.disableCache = source["disableCache"];
+	        this.cacheDir = source["cacheDir"];
+	        this.ignoreArchived = source["ignoreArchived"];
+	        this.configPath = source["configPath"];
+	    }
 	}
 
 }
@@ -675,6 +675,11 @@ export namespace models {
 	    fullName: string;
 	    htmlUrl: string;
 	    defaultBranch: string;
+	    defaultBranchPushedAt?: string;
+	    advancedSecurityEnabled?: boolean;
+	    advancedSecurityStatus?: string;
+	    dependencyGraphEnabled?: boolean;
+	    dependencyGraphStatus?: string;
 	    branchProtection: BranchProtectionSnapshot;
 	    deleteBranchOnMerge?: boolean;
 	    allowAutoMerge?: boolean;
@@ -691,6 +696,11 @@ export namespace models {
 	        this.fullName = source["fullName"];
 	        this.htmlUrl = source["htmlUrl"];
 	        this.defaultBranch = source["defaultBranch"];
+	        this.defaultBranchPushedAt = source["defaultBranchPushedAt"];
+	        this.advancedSecurityEnabled = source["advancedSecurityEnabled"];
+	        this.advancedSecurityStatus = source["advancedSecurityStatus"];
+	        this.dependencyGraphEnabled = source["dependencyGraphEnabled"];
+	        this.dependencyGraphStatus = source["dependencyGraphStatus"];
 	        this.branchProtection = this.convertValues(source["branchProtection"], BranchProtectionSnapshot);
 	        this.deleteBranchOnMerge = source["deleteBranchOnMerge"];
 	        this.allowAutoMerge = source["allowAutoMerge"];
@@ -1004,3 +1014,4 @@ export namespace models {
 	
 
 }
+

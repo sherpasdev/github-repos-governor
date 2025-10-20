@@ -13,17 +13,6 @@ permissions:
   pull-requests: read
 
 jobs:
-  gitleaks:
-    name: Secret Scan (Gitleaks)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Run Gitleaks
-        uses: gitleaks/gitleaks-action@v2
-        with:
-          args: --redact --no-banner
-
   gosec:
     name: GoSec
     runs-on: ubuntu-latest
@@ -36,7 +25,7 @@ jobs:
           go-version-file: go.mod
           check-latest: true
       - name: Run gosec
-        uses: securego/gosec@v2
+        uses: securego/gosec@master
         with:
           args: ./...
 

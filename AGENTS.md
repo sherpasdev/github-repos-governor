@@ -61,6 +61,10 @@
 - Table header is sticky (`position: sticky` in CSS) with a scrollable wrapper.
 - Governance widget on the Repositories page exposes the same bulk actions as the old Governance tab (which has been removed).
 - Settings screen handles config persistence and notifies via the nav banner.
+- `frontend/dist/.gitkeep` is tracked so `//go:embed all:frontend/dist` succeeds during `go vet`; keep it (builds will overwrite the directory contents).
+- If the config is missing required fields, the app automatically navigates to Settings and highlights the GitHub token/org inputs until saved.
+- Go tests now include fixtures under `internal/github/testdata/` that mirror actual GitHub repo JSON to validate security and dependency graph extraction.
+- Advanced security and dependency graph statuses retain their raw GitHub strings (`enabled_on`, `disabled_by_org_policy`, etc.) and display them alongside the normalized enabled/disabled state in the Repositories table.
 
 ## Backend Notes
 - `GetSettings`/`SaveSettings` (app.go) serialize/deserialise `SettingsPayload` and call `config.Save` (new helper) before reinitialising the app config/cache provider.

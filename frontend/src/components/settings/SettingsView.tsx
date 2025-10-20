@@ -6,11 +6,12 @@ import styles from "./SettingsView.module.css";
 type SettingsViewProps = {
   onNotify: (notification: { type: "success" | "error"; message: string } | null) => void;
   onSaved: () => void;
+  missingKeys: string[];
 };
 
 type FormState = Omit<SettingsData, "configPath">;
 
-export function SettingsView({ onNotify, onSaved }: SettingsViewProps) {
+export function SettingsView({ onNotify, onSaved, missingKeys }: SettingsViewProps) {
   const [initialSettings, setInitialSettings] = useState<SettingsData | null>(null);
   const [form, setForm] = useState<FormState>({
     githubToken: "",
@@ -24,6 +25,7 @@ export function SettingsView({ onNotify, onSaved }: SettingsViewProps) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [highlighted, setHighlighted] = useState<string[]>([]);
 
   useEffect(() => {
     let mounted = true;
@@ -42,6 +44,7 @@ export function SettingsView({ onNotify, onSaved }: SettingsViewProps) {
           ignoreArchived: settings.ignoreArchived ?? true,
         });
         setConfigPath(settings.configPath ?? "");
+        setHighlighted([]);
       })
       .catch((err: Error) => {
         if (!mounted) {
@@ -59,6 +62,10 @@ export function SettingsView({ onNotify, onSaved }: SettingsViewProps) {
       mounted = false;
     };
   }, []);
+
+  useEffect(() => {
+    setHighlighted(missingKeys ?? []);
+  }, [missingKeys]);
 
   const dirty = useMemo(() => {
     if (!initialSettings) {
@@ -79,6 +86,7 @@ export function SettingsView({ onNotify, onSaved }: SettingsViewProps) {
       ...prev,
       [key]: value,
     }));
+    setHighlighted((prev) => prev.filter((item) => item !== key));
   };
 
   const handleReset = () => {
@@ -93,6 +101,7 @@ export function SettingsView({ onNotify, onSaved }: SettingsViewProps) {
       cacheDir: initialSettings.cacheDir ?? "",
       ignoreArchived: initialSettings.ignoreArchived,
     });
+    setHighlighted(missingKeys ?? []);
   };
 
   const handleSubmit = async () => {
@@ -101,9 +110,13 @@ export function SettingsView({ onNotify, onSaved }: SettingsViewProps) {
     }
     const trimmedToken = form.githubToken.trim();
     const trimmedOrg = form.githubOrg.trim();
-    if (!trimmedToken || !trimmedOrg) {
+    const missingRequired: string[] = [];
+    if (!trimmedToken) missingRequired.push("githubToken");
+    if (!trimmedOrg) missingRequired.push("githubOrg");
+    if (missingRequired.length > 0) {
       const message = "GitHub token and organization are required.";
       setError(message);
+      setHighlighted(missingRequired);
       onNotify({
         type: "error",
         message,
@@ -134,6 +147,7 @@ export function SettingsView({ onNotify, onSaved }: SettingsViewProps) {
         githubToken: trimmedToken,
         githubOrg: trimmedOrg,
       }));
+      setHighlighted([]);
       onSaved();
     } catch (err) {
       const message = (err as Error).message;
@@ -186,7 +200,12 @@ export function SettingsView({ onNotify, onSaved }: SettingsViewProps) {
 
         <div className={styles.formGrid}>
           <div className={styles.formGroup}>
-            <label htmlFor="settings-token">GitHub personal access token</label>
+            <label
+              htmlFor="settings-token"
+              className={highlighted.includes("githubToken") ? styles.fieldErrorLabel : undefined}
+            >
+              GitHub personal access token
+            </label>
             <input
               id="settings-token"
               type="password"
@@ -194,16 +213,23 @@ export function SettingsView({ onNotify, onSaved }: SettingsViewProps) {
               value={form.githubToken}
               onChange={(event) => handleChange("githubToken", event.target.value)}
               placeholder="ghp_xxx"
+              className={highlighted.includes("githubToken") ? styles.fieldErrorInput : undefined}
             />
           </div>
           <div className={styles.formGroup}>
-            <label htmlFor="settings-org">Organization</label>
+            <label
+              htmlFor="settings-org"
+              className={highlighted.includes("githubOrg") ? styles.fieldErrorLabel : undefined}
+            >
+              Organization
+            </label>
             <input
               id="settings-org"
               type="text"
               value={form.githubOrg}
               onChange={(event) => handleChange("githubOrg", event.target.value)}
               placeholder="my-org"
+              className={highlighted.includes("githubOrg") ? styles.fieldErrorInput : undefined}
             />
           </div>
           <div className={styles.formGroup}>

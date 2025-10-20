@@ -41,6 +41,9 @@ type Repository struct {
 		AdvancedSecurity *struct {
 			Status string `json:"status"`
 		} `json:"advanced_security"`
+		DependencyGraph *struct {
+			Status string `json:"status"`
+		} `json:"dependency_graph"`
 		SecretScanning *struct {
 			Status string `json:"status"`
 		} `json:"secret_scanning"`

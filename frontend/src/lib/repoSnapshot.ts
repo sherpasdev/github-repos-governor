@@ -39,6 +39,11 @@ export type RepoPolicySnapshot = {
   fullName: string;
   htmlUrl: string;
   defaultBranch: string;
+  defaultBranchPushedAt: string | null;
+  advancedSecurityEnabled: boolean | null;
+  advancedSecurityStatus: string | null;
+  dependencyGraphEnabled: boolean | null;
+  dependencyGraphStatus: string | null;
   branchProtection: BranchProtectionSnapshot;
   deleteBranchOnMerge: boolean | null;
   allowAutoMerge: boolean | null;

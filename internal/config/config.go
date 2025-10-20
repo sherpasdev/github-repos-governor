@@ -57,21 +57,24 @@ func MissingFields(cfg Config) []string {
 }
 
 func loadConfig() (Config, error) {
-	path, err := resolveConfigPath()
+	path, exists, err := resolveConfigPath()
 	if err != nil {
 		return Config{}, err
-	}
-
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return Config{}, fmt.Errorf("read config %q: %w", path, err)
 	}
 
 	cfg := Config{
 		IgnoreArchived: true,
 	}
-	if err := json.Unmarshal(data, &cfg); err != nil {
-		return Config{}, fmt.Errorf("parse config %q: %w", path, err)
+
+	if exists {
+		data, err := os.ReadFile(path)
+		if err != nil {
+			return Config{}, fmt.Errorf("read config %q: %w", path, err)
+		}
+
+		if err := json.Unmarshal(data, &cfg); err != nil {
+			return Config{}, fmt.Errorf("parse config %q: %w", path, err)
+		}
 	}
 
 	cfg.GithubToken = strings.TrimSpace(cfg.GithubToken)
@@ -92,26 +95,39 @@ func loadConfig() (Config, error) {
 	return cfg, nil
 }
 
-func resolveConfigPath() (string, error) {
+func resolveConfigPath() (string, bool, error) {
 	if override := strings.TrimSpace(os.Getenv("GOVERNOR_CONFIG")); override != "" {
 		if !filepath.IsAbs(override) {
 			cwd, err := os.Getwd()
 			if err != nil {
-				return "", fmt.Errorf("determine working directory: %w", err)
+				return "", false, fmt.Errorf("determine working directory: %w", err)
 			}
 			override = filepath.Join(cwd, override)
 		}
-		return filepath.Clean(override), nil
+		override = filepath.Clean(override)
+		if _, err := os.Stat(override); err != nil {
+			if errors.Is(err, os.ErrNotExist) {
+				return override, false, nil
+			}
+			return "", false, fmt.Errorf("stat %q: %w", override, err)
+		}
+		return override, true, nil
 	}
 
 	paths := candidatePaths()
 	for _, candidate := range paths {
 		if _, err := os.Stat(candidate); err == nil {
-			return candidate, nil
+			return candidate, true, nil
+		} else if err != nil && !errors.Is(err, os.ErrNotExist) {
+			return "", false, fmt.Errorf("stat %q: %w", candidate, err)
 		}
 	}
 
-	return "", fmt.Errorf("configuration file not found; expected one of %v (or set GOVERNOR_CONFIG)", paths)
+	if len(paths) == 0 {
+		return "", false, errors.New("unable to determine configuration path")
+	}
+
+	return paths[0], false, nil
 }
 
 func candidatePaths() []string {

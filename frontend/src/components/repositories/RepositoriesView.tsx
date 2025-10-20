@@ -28,6 +28,11 @@ type RepoRow = {
   fullName: string;
   htmlUrl: string;
   defaultBranch: string;
+  defaultBranchLastPush: string | null;
+  advancedSecurity: boolean | null;
+  advancedSecurityStatus: string | null;
+  dependencyGraph: boolean | null;
+  dependencyGraphStatus: string | null;
   branchProtected: boolean;
   approvalsRequired: number | null;
   statusChecks: string;
@@ -189,6 +194,11 @@ export function RepositoriesView({
           fullName: policy.fullName,
           htmlUrl: policy.htmlUrl,
           defaultBranch: policy.defaultBranch,
+          defaultBranchLastPush: policy.defaultBranchPushedAt ?? null,
+          advancedSecurity: policy.advancedSecurityEnabled ?? null,
+          advancedSecurityStatus: policy.advancedSecurityStatus ?? null,
+          dependencyGraph: policy.dependencyGraphEnabled ?? null,
+          dependencyGraphStatus: policy.dependencyGraphStatus ?? null,
           branchProtected: branch.enabled,
           approvalsRequired: branch.requiredApprovingReviewCount,
           statusChecks: statusChecksLabel,
@@ -198,7 +208,14 @@ export function RepositoriesView({
           allowUpdateBranch: policy.allowUpdateBranch,
         } satisfies RepoRow;
       })
-      .sort((a, b) => a.name.localeCompare(b.name));
+      .sort((a, b) => {
+        const dateA = a.defaultBranchLastPush ? Date.parse(a.defaultBranchLastPush) : 0;
+        const dateB = b.defaultBranchLastPush ? Date.parse(b.defaultBranchLastPush) : 0;
+        if (dateA !== dateB) {
+          return dateB - dateA;
+        }
+        return a.name.localeCompare(b.name);
+      });
   }, [repoPolicies]);
 
   const governanceStats = useMemo(() => {
@@ -470,7 +487,7 @@ export function RepositoriesView({
       <div className={styles.emptyState}>
         <h2>Configuration required</h2>
         <p>
-          Provide the required values in <code>{configTarget}</code> and restart the app.
+          Provide the required values via the Settings tab. They will be saved to <code>{configTarget}</code>.
           {missingFields.length > 0 ? (
             <> Missing keys: {missingFields.join(", ")}.</>
           ) : (
@@ -671,6 +688,7 @@ export function RepositoriesView({
               ? "Fetching latest repository policies…"
               : `${rows.length} repositories from ${organization ?? "unknown organisation"}.`}
           </p>
+          <p className={styles.tableNote}>Last push reflects the most recent commit on the default branch.</p>
         </div>
         <button
           type="button"
@@ -687,6 +705,7 @@ export function RepositoriesView({
             <tr>
               <th>Repository</th>
               <th>Default branch</th>
+              <th>Last push</th>
               <th>Protected</th>
               <th>Approvals</th>
               <th>
@@ -721,6 +740,8 @@ export function RepositoriesView({
                   />
                 </div>
               </th>
+              <th>CodeQL</th>
+              <th>Dependency graph</th>
             </tr>
           </thead>
           <tbody>
@@ -762,7 +783,8 @@ export function RepositoriesView({
                       </div>
                     </div>
                   </td>
-                  <td>{row.defaultBranch}</td>
+                 <td>{row.defaultBranch}</td>
+                 <td>{renderLastPush(row.defaultBranchLastPush)}</td>
                   <td>{renderBoolean(row.branchProtected)}</td>
                   <td>{row.approvalsRequired ?? "—"}</td>
                   <td>{row.statusChecks}</td>
@@ -814,6 +836,8 @@ export function RepositoriesView({
                       ariaLabel={`Toggle allow branch updates for ${row.name}`}
                     />
                   </td>
+                  <td>{renderSecurity(row.advancedSecurity, row.advancedSecurityStatus ?? undefined)}</td>
+                  <td>{renderSecurity(row.dependencyGraph, row.dependencyGraphStatus ?? undefined)}</td>
                 </tr>
               ))
             )}
@@ -870,6 +894,115 @@ function renderForcePush(value: boolean | null | undefined) {
   ) : (
     <span className={styles.booleanYes}>Blocked</span>
   );
+}
+
+function renderLastPush(iso: string | null) {
+  if (!iso) {
+    return <span className={styles.booleanUnknown}>Unknown</span>;
+  }
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) {
+    return <span className={styles.booleanUnknown}>Unknown</span>;
+  }
+  return date.toLocaleString();
+}
+
+function renderSecurity(isEnabled: boolean | null, status?: string) {
+  const parsed = parseStatus(status ?? "");
+  const label = parsed?.label;
+  const detail = parsed?.detail;
+  const className = determineSecurityClass(isEnabled, label);
+
+  if (!label) {
+    if (isEnabled === null) {
+      return <span className={styles.booleanUnknown}>Unknown</span>;
+    }
+    return isEnabled ? (
+      <span className={styles.booleanYes}>Enabled</span>
+    ) : (
+      <span className={styles.booleanNo}>Disabled</span>
+    );
+  }
+
+  return (
+    <span className={className} title={status ?? label}>
+      {label}
+      {detail ? <span className={styles.securityDetail}>{detail}</span> : null}
+    </span>
+  );
+}
+
+function determineSecurityClass(isEnabled: boolean | null, label?: string) {
+  if (isEnabled === true || label?.toLowerCase().startsWith("enabled")) {
+    return styles.securityStatusPositive;
+  }
+  if (isEnabled === false || label?.toLowerCase().startsWith("disabled")) {
+    return styles.securityStatusNegative;
+  }
+  return styles.securityStatusNeutral;
+}
+
+function parseStatus(raw: string) {
+  const trimmed = raw.trim();
+  if (!trimmed) {
+    return undefined;
+  }
+
+  const lower = trimmed.toLowerCase();
+  const baseDetail = (value: string) => value.replace(/[_-]/g, " ").trim();
+  const capitalise = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
+
+  if (lower.startsWith("enabled")) {
+    const suffix = baseDetail(lower.replace(/^enabled[_-]?/, ""));
+    const detail = mapDetail(suffix);
+    return {
+      label: "Enabled",
+      detail,
+    };
+  }
+
+  if (lower.startsWith("disabled")) {
+    const suffix = baseDetail(lower.replace(/^disabled[_-]?/, ""));
+    const detail = mapDetail(suffix);
+    return {
+      label: "Disabled",
+      detail,
+    };
+  }
+
+  if (lower.startsWith("not_available")) {
+    return { label: "Not available" };
+  }
+
+  if (lower.startsWith("not_supported") || lower.startsWith("unsupported")) {
+    return { label: "Not supported" };
+  }
+
+  if (lower.startsWith("required")) {
+    return { label: "Required" };
+  }
+
+  return { label: capitalise(trimmed.replace(/[_-]/g, " ")) };
+}
+
+function mapDetail(detail: string) {
+  const cleaned = detail.toLowerCase();
+  switch (cleaned) {
+    case "":
+      return undefined;
+    case "on":
+      return "Default setup";
+    case "managed":
+      return "Managed";
+    case "managed default":
+      return "Managed default";
+    case "by org policy":
+      return "By org policy";
+    case "by enterprise policy":
+      return "By enterprise policy";
+    default:
+      return cleaned.replace(/\b\w/g, (match) => match.toUpperCase());
+  }
 }
 
 function describeSetting(field: RepoSettingField, enabled: boolean) {

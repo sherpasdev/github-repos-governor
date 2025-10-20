@@ -536,6 +536,11 @@ func (c *Client) BuildOrganizationSnapshot(ctx context.Context, repos []Reposito
 			FullName:            repo.FullName,
 			HTMLURL:             repo.HTMLURL,
 			DefaultBranch:       repo.DefaultBranch,
+			DefaultBranchPushedAt: selectString(detail.PushedAt, repo.PushedAt),
+			AdvancedSecurityEnabled: selectBoolFromSecurity(detail.SecurityAndAnalysis, repo.SecurityAndAnalysis),
+			AdvancedSecurityStatus:  selectSecurityStatus(detail.SecurityAndAnalysis, repo.SecurityAndAnalysis, advancedSecurityExtractor{}),
+			DependencyGraphEnabled: selectDependencyGraph(detail.SecurityAndAnalysis, repo.SecurityAndAnalysis),
+			DependencyGraphStatus:  selectSecurityStatus(detail.SecurityAndAnalysis, repo.SecurityAndAnalysis, dependencyGraphExtractor{}),
 			BranchProtection:    emptyBranchProtection(false),
 			DeleteBranchOnMerge: selectBool(detail.DeleteBranchOnMerge, repo.DeleteBranchOnMerge),
 			AllowAutoMerge:      selectBool(detail.AllowAutoMerge, repo.AllowAutoMerge),
@@ -590,4 +595,276 @@ func selectBool(primary, fallback *bool) *bool {
 		return primary
 	}
 	return fallback
+}
+
+func selectString(primary, fallback string) *string {
+	value := strings.TrimSpace(primary)
+	if value == "" {
+		value = strings.TrimSpace(fallback)
+	}
+	if value == "" {
+		return nil
+	}
+	return &value
+}
+
+func selectBoolFromSecurity(primary, fallback *struct {
+	DependabotSecurityUpdates *struct {
+		Status string `json:"status"`
+	} `json:"dependabot_security_updates"`
+	AdvancedSecurity *struct {
+		Status string `json:"status"`
+	} `json:"advanced_security"`
+	DependencyGraph *struct {
+		Status string `json:"status"`
+	} `json:"dependency_graph"`
+	SecretScanning *struct {
+		Status string `json:"status"`
+	} `json:"secret_scanning"`
+	SecretScanningPushProtection *struct {
+		Status string `json:"status"`
+	} `json:"secret_scanning_push_protection"`
+}) *bool {
+	value := extractAdvancedSecurity(primary)
+	if value != nil {
+		return value
+	}
+	return extractAdvancedSecurity(fallback)
+}
+
+func extractAdvancedSecurity(payload *struct {
+	DependabotSecurityUpdates *struct {
+		Status string `json:"status"`
+	} `json:"dependabot_security_updates"`
+	AdvancedSecurity *struct {
+		Status string `json:"status"`
+	} `json:"advanced_security"`
+	DependencyGraph *struct {
+		Status string `json:"status"`
+	} `json:"dependency_graph"`
+	SecretScanning *struct {
+		Status string `json:"status"`
+	} `json:"secret_scanning"`
+	SecretScanningPushProtection *struct {
+		Status string `json:"status"`
+	} `json:"secret_scanning_push_protection"`
+}) *bool {
+	if payload == nil || payload.AdvancedSecurity == nil {
+		return nil
+	}
+	switch normalizeStatus(payload.AdvancedSecurity.Status) {
+	case "enabled":
+		value := true
+		return &value
+	case "disabled":
+		value := false
+		return &value
+	default:
+		return nil
+	}
+}
+
+func selectDependencyGraph(primary, fallback *struct {
+	DependabotSecurityUpdates *struct {
+		Status string `json:"status"`
+	} `json:"dependabot_security_updates"`
+	AdvancedSecurity *struct {
+		Status string `json:"status"`
+	} `json:"advanced_security"`
+	DependencyGraph *struct {
+		Status string `json:"status"`
+	} `json:"dependency_graph"`
+	SecretScanning *struct {
+		Status string `json:"status"`
+	} `json:"secret_scanning"`
+	SecretScanningPushProtection *struct {
+		Status string `json:"status"`
+	} `json:"secret_scanning_push_protection"`
+}) *bool {
+	value := extractDependencyGraph(primary)
+	if value != nil {
+		return value
+	}
+	return extractDependencyGraph(fallback)
+}
+
+func extractDependencyGraph(payload *struct {
+	DependabotSecurityUpdates *struct {
+		Status string `json:"status"`
+	} `json:"dependabot_security_updates"`
+	AdvancedSecurity *struct {
+		Status string `json:"status"`
+	} `json:"advanced_security"`
+	DependencyGraph *struct {
+		Status string `json:"status"`
+	} `json:"dependency_graph"`
+	SecretScanning *struct {
+		Status string `json:"status"`
+	} `json:"secret_scanning"`
+	SecretScanningPushProtection *struct {
+		Status string `json:"status"`
+	} `json:"secret_scanning_push_protection"`
+}) *bool {
+	if payload == nil || payload.DependencyGraph == nil {
+		return nil
+	}
+	switch normalizeStatus(payload.DependencyGraph.Status) {
+	case "enabled":
+		value := true
+		return &value
+	case "disabled":
+		value := false
+		return &value
+	default:
+		return nil
+	}
+}
+
+type securityExtractor interface {
+	Extract(payload *struct {
+		DependabotSecurityUpdates *struct {
+			Status string `json:"status"`
+		} `json:"dependabot_security_updates"`
+		AdvancedSecurity *struct {
+			Status string `json:"status"`
+		} `json:"advanced_security"`
+		DependencyGraph *struct {
+			Status string `json:"status"`
+		} `json:"dependency_graph"`
+		SecretScanning *struct {
+			Status string `json:"status"`
+		} `json:"secret_scanning"`
+		SecretScanningPushProtection *struct {
+			Status string `json:"status"`
+		} `json:"secret_scanning_push_protection"`
+	}) string
+}
+
+type advancedSecurityExtractor struct{}
+
+func (advancedSecurityExtractor) Extract(payload *struct {
+	DependabotSecurityUpdates *struct {
+		Status string `json:"status"`
+	} `json:"dependabot_security_updates"`
+	AdvancedSecurity *struct {
+		Status string `json:"status"`
+	} `json:"advanced_security"`
+	DependencyGraph *struct {
+		Status string `json:"status"`
+	} `json:"dependency_graph"`
+	SecretScanning *struct {
+		Status string `json:"status"`
+	} `json:"secret_scanning"`
+	SecretScanningPushProtection *struct {
+		Status string `json:"status"`
+	} `json:"secret_scanning_push_protection"`
+}) string {
+	if payload == nil || payload.AdvancedSecurity == nil {
+		return ""
+	}
+	return payload.AdvancedSecurity.Status
+}
+
+type dependencyGraphExtractor struct{}
+
+func (dependencyGraphExtractor) Extract(payload *struct {
+	DependabotSecurityUpdates *struct {
+		Status string `json:"status"`
+	} `json:"dependabot_security_updates"`
+	AdvancedSecurity *struct {
+		Status string `json:"status"`
+	} `json:"advanced_security"`
+	DependencyGraph *struct {
+		Status string `json:"status"`
+	} `json:"dependency_graph"`
+	SecretScanning *struct {
+		Status string `json:"status"`
+	} `json:"secret_scanning"`
+	SecretScanningPushProtection *struct {
+		Status string `json:"status"`
+	} `json:"secret_scanning_push_protection"`
+}) string {
+	if payload == nil || payload.DependencyGraph == nil {
+		return ""
+	}
+	return payload.DependencyGraph.Status
+}
+
+func selectSecurityStatus(primary, fallback *struct {
+	DependabotSecurityUpdates *struct {
+		Status string `json:"status"`
+	} `json:"dependabot_security_updates"`
+	AdvancedSecurity *struct {
+		Status string `json:"status"`
+	} `json:"advanced_security"`
+	DependencyGraph *struct {
+		Status string `json:"status"`
+	} `json:"dependency_graph"`
+	SecretScanning *struct {
+		Status string `json:"status"`
+	} `json:"secret_scanning"`
+	SecretScanningPushProtection *struct {
+		Status string `json:"status"`
+	} `json:"secret_scanning_push_protection"`
+}, extractor securityExtractor) *string {
+	if status := strings.TrimSpace(extractor.Extract(primary)); status != "" {
+		return &status
+	}
+	if status := strings.TrimSpace(extractor.Extract(fallback)); status != "" {
+		return &status
+	}
+	return nil
+}
+
+func normalizeStatus(status string) string {
+	trimmed := strings.TrimSpace(status)
+	if trimmed == "" {
+		return ""
+	}
+	lower := strings.ToLower(trimmed)
+	switch {
+	case strings.HasPrefix(lower, "enabled"):
+		return "enabled"
+	case strings.HasPrefix(lower, "disabled"):
+		return "disabled"
+	case strings.HasPrefix(lower, "not_available"):
+		return "not_available"
+	case strings.HasPrefix(lower, "not_supported") || strings.HasPrefix(lower, "unsupported"):
+		return "not_supported"
+	case strings.HasPrefix(lower, "required"):
+		return "required"
+	default:
+		return ""
+	}
+}
+
+func describeStatus(status string) string {
+	trimmed := strings.TrimSpace(status)
+	if trimmed == "" {
+		return ""
+	}
+	lower := strings.ToLower(trimmed)
+	var base string
+	var detail string
+	switch {
+	case strings.HasPrefix(lower, "enabled"):
+		base = "enabled"
+		detail = strings.TrimPrefix(lower, "enabled")
+	case strings.HasPrefix(lower, "disabled"):
+		base = "disabled"
+		detail = strings.TrimPrefix(lower, "disabled")
+	case strings.HasPrefix(lower, "not_available"):
+		return "not_available"
+	case strings.HasPrefix(lower, "not_supported") || strings.HasPrefix(lower, "unsupported"):
+		return "not_supported"
+	case strings.HasPrefix(lower, "required"):
+		return "required"
+	default:
+		return trimmed
+	}
+	detail = strings.Trim(detail, " _")
+	if detail == "" {
+		return base
+	}
+	return base + " (" + detail + ")"
 }

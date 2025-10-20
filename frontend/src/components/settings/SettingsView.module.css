@@ -70,6 +70,15 @@
   color: rgba(100, 116, 139, 0.8);
 }
 
+.fieldErrorLabel {
+  color: rgba(220, 38, 38, 0.9);
+}
+
+.fieldErrorInput {
+  border-color: rgba(248, 113, 113, 0.75);
+  box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.4);
+}
+
 .checkboxRow {
   display: flex;
   flex-wrap: wrap;
