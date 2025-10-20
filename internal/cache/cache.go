@@ -28,7 +28,7 @@ func NewManager(dir string) (*Manager, error) {
 		return nil, errors.New("cache directory not specified")
 	}
 
-	if err := os.MkdirAll(dir, 0o755); err != nil {
+	if err := os.MkdirAll(dir, 0o750); err != nil {
 		return nil, err
 	}
 
@@ -66,6 +66,7 @@ func ReadLatest[T any](m *Manager, org string) (*Entry[T], error) {
 	}
 
 	latest := filepath.Join(m.dir, entries[0])
+	// #nosec G304 - path is constructed from dirEntries() which filters by org prefix
 	data, err := os.ReadFile(latest)
 	if err != nil {
 		return nil, err
@@ -104,7 +105,7 @@ func WriteAt[T any](m *Manager, org string, payload T, at time.Time) (string, er
 		return "", err
 	}
 
-	if err := os.WriteFile(filename, data, 0o644); err != nil {
+	if err := os.WriteFile(filename, data, 0o600); err != nil {
 		return "", err
 	}
 

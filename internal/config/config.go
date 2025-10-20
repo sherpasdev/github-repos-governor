@@ -67,6 +67,7 @@ func loadConfig() (Config, error) {
 	}
 
 	if exists {
+		// #nosec G304 - path is controlled by resolveConfigPath()
 		data, err := os.ReadFile(path)
 		if err != nil {
 			return Config{}, fmt.Errorf("read config %q: %w", path, err)
@@ -188,7 +189,7 @@ func EnsureFile(path string, cfg Config) error {
 	if path == "" {
 		return errors.New("path is empty")
 	}
-	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(path), 0o750); err != nil {
 		return err
 	}
 	if _, err := os.Stat(path); err == nil {
@@ -208,7 +209,7 @@ func Save(path string, cfg Config) error {
 	if strings.TrimSpace(path) == "" {
 		return errors.New("path is empty")
 	}
-	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(path), 0o750); err != nil {
 		return err
 	}
 	cfg.UserAgent = ""
