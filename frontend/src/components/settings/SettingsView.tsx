@@ -1,27 +1,27 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from 'react';
 
-import { getSettings, saveSettings, type SettingsData } from "@/services/api";
-import styles from "./SettingsView.module.css";
+import { getSettings, saveSettings, type SettingsData } from '@/services/api';
+import styles from './SettingsView.module.css';
 
 type SettingsViewProps = {
-  onNotify: (notification: { type: "success" | "error"; message: string } | null) => void;
+  onNotify: (notification: { type: 'success' | 'error'; message: string } | null) => void;
   onSaved: () => void;
   missingKeys: string[];
 };
 
-type FormState = Omit<SettingsData, "configPath">;
+type FormState = Omit<SettingsData, 'configPath'>;
 
 export function SettingsView({ onNotify, onSaved, missingKeys }: SettingsViewProps) {
   const [initialSettings, setInitialSettings] = useState<SettingsData | null>(null);
   const [form, setForm] = useState<FormState>({
-    githubToken: "",
-    githubOrg: "",
-    githubApiBaseUrl: "https://api.github.com",
+    githubToken: '',
+    githubOrg: '',
+    githubApiBaseUrl: 'https://api.github.com',
     disableCache: false,
-    cacheDir: "",
+    cacheDir: '',
     ignoreArchived: true,
   });
-  const [configPath, setConfigPath] = useState<string>("");
+  const [configPath, setConfigPath] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,20 +30,20 @@ export function SettingsView({ onNotify, onSaved, missingKeys }: SettingsViewPro
   useEffect(() => {
     let mounted = true;
     getSettings()
-      .then((settings) => {
+      .then(settings => {
         if (!mounted) {
           return;
         }
         setInitialSettings(settings);
         setForm({
-          githubToken: settings.githubToken ?? "",
-          githubOrg: settings.githubOrg ?? "",
-          githubApiBaseUrl: settings.githubApiBaseUrl ?? "https://api.github.com",
+          githubToken: settings.githubToken ?? '',
+          githubOrg: settings.githubOrg ?? '',
+          githubApiBaseUrl: settings.githubApiBaseUrl ?? 'https://api.github.com',
           disableCache: Boolean(settings.disableCache),
-          cacheDir: settings.cacheDir ?? "",
+          cacheDir: settings.cacheDir ?? '',
           ignoreArchived: settings.ignoreArchived ?? true,
         });
-        setConfigPath(settings.configPath ?? "");
+        setConfigPath(settings.configPath ?? '');
         setHighlighted([]);
       })
       .catch((err: Error) => {
@@ -72,21 +72,21 @@ export function SettingsView({ onNotify, onSaved, missingKeys }: SettingsViewPro
       return false;
     }
     return (
-      form.githubToken !== (initialSettings.githubToken ?? "") ||
-      form.githubOrg !== (initialSettings.githubOrg ?? "") ||
-      form.githubApiBaseUrl !== (initialSettings.githubApiBaseUrl ?? "https://api.github.com") ||
+      form.githubToken !== (initialSettings.githubToken ?? '') ||
+      form.githubOrg !== (initialSettings.githubOrg ?? '') ||
+      form.githubApiBaseUrl !== (initialSettings.githubApiBaseUrl ?? 'https://api.github.com') ||
       form.disableCache !== initialSettings.disableCache ||
-      form.cacheDir !== (initialSettings.cacheDir ?? "") ||
+      form.cacheDir !== (initialSettings.cacheDir ?? '') ||
       form.ignoreArchived !== initialSettings.ignoreArchived
     );
   }, [form, initialSettings]);
 
   const handleChange = <K extends keyof FormState>(key: K, value: FormState[K]) => {
-    setForm((prev) => ({
+    setForm(prev => ({
       ...prev,
       [key]: value,
     }));
-    setHighlighted((prev) => prev.filter((item) => item !== key));
+    setHighlighted(prev => prev.filter(item => item !== key));
   };
 
   const handleReset = () => {
@@ -94,11 +94,11 @@ export function SettingsView({ onNotify, onSaved, missingKeys }: SettingsViewPro
       return;
     }
     setForm({
-      githubToken: initialSettings.githubToken ?? "",
-      githubOrg: initialSettings.githubOrg ?? "",
-      githubApiBaseUrl: initialSettings.githubApiBaseUrl ?? "https://api.github.com",
+      githubToken: initialSettings.githubToken ?? '',
+      githubOrg: initialSettings.githubOrg ?? '',
+      githubApiBaseUrl: initialSettings.githubApiBaseUrl ?? 'https://api.github.com',
       disableCache: initialSettings.disableCache,
-      cacheDir: initialSettings.cacheDir ?? "",
+      cacheDir: initialSettings.cacheDir ?? '',
       ignoreArchived: initialSettings.ignoreArchived,
     });
     setHighlighted(missingKeys ?? []);
@@ -111,14 +111,14 @@ export function SettingsView({ onNotify, onSaved, missingKeys }: SettingsViewPro
     const trimmedToken = form.githubToken.trim();
     const trimmedOrg = form.githubOrg.trim();
     const missingRequired: string[] = [];
-    if (!trimmedToken) missingRequired.push("githubToken");
-    if (!trimmedOrg) missingRequired.push("githubOrg");
+    if (!trimmedToken) missingRequired.push('githubToken');
+    if (!trimmedOrg) missingRequired.push('githubOrg');
     if (missingRequired.length > 0) {
-      const message = "GitHub token and organization are required.";
+      const message = 'GitHub token and organization are required.';
       setError(message);
       setHighlighted(missingRequired);
       onNotify({
-        type: "error",
+        type: 'error',
         message,
       });
       return;
@@ -133,8 +133,8 @@ export function SettingsView({ onNotify, onSaved, missingKeys }: SettingsViewPro
         configPath,
       });
       onNotify({
-        type: "success",
-        message: "Settings updated successfully.",
+        type: 'success',
+        message: 'Settings updated successfully.',
       });
       setInitialSettings({
         ...form,
@@ -142,7 +142,7 @@ export function SettingsView({ onNotify, onSaved, missingKeys }: SettingsViewPro
         githubOrg: trimmedOrg,
         configPath,
       });
-      setForm((prev) => ({
+      setForm(prev => ({
         ...prev,
         githubToken: trimmedToken,
         githubOrg: trimmedOrg,
@@ -153,7 +153,7 @@ export function SettingsView({ onNotify, onSaved, missingKeys }: SettingsViewPro
       const message = (err as Error).message;
       setError(message);
       onNotify({
-        type: "error",
+        type: 'error',
         message,
       });
     } finally {
@@ -200,105 +200,80 @@ export function SettingsView({ onNotify, onSaved, missingKeys }: SettingsViewPro
 
         <div className={styles.formGrid}>
           <div className={styles.formGroup}>
-            <label
-              htmlFor="settings-token"
-              className={highlighted.includes("githubToken") ? styles.fieldErrorLabel : undefined}
-            >
+            <label htmlFor='settings-token' className={highlighted.includes('githubToken') ? styles.fieldErrorLabel : undefined}>
               GitHub personal access token
             </label>
             <input
-              id="settings-token"
-              type="password"
-              autoComplete="off"
+              id='settings-token'
+              type='password'
+              autoComplete='off'
               value={form.githubToken}
-              onChange={(event) => handleChange("githubToken", event.target.value)}
-              placeholder="ghp_xxx"
-              className={highlighted.includes("githubToken") ? styles.fieldErrorInput : undefined}
+              onChange={event => handleChange('githubToken', event.target.value)}
+              placeholder='ghp_xxx'
+              className={highlighted.includes('githubToken') ? styles.fieldErrorInput : undefined}
             />
           </div>
           <div className={styles.formGroup}>
-            <label
-              htmlFor="settings-org"
-              className={highlighted.includes("githubOrg") ? styles.fieldErrorLabel : undefined}
-            >
+            <label htmlFor='settings-org' className={highlighted.includes('githubOrg') ? styles.fieldErrorLabel : undefined}>
               Organization
             </label>
             <input
-              id="settings-org"
-              type="text"
+              id='settings-org'
+              type='text'
               value={form.githubOrg}
-              onChange={(event) => handleChange("githubOrg", event.target.value)}
-              placeholder="my-org"
-              className={highlighted.includes("githubOrg") ? styles.fieldErrorInput : undefined}
+              onChange={event => handleChange('githubOrg', event.target.value)}
+              placeholder='my-org'
+              className={highlighted.includes('githubOrg') ? styles.fieldErrorInput : undefined}
             />
           </div>
           <div className={styles.formGroup}>
-            <label htmlFor="settings-api">GitHub API base URL</label>
+            <label htmlFor='settings-api'>GitHub API base URL</label>
             <input
-              id="settings-api"
-              type="text"
+              id='settings-api'
+              type='text'
               value={form.githubApiBaseUrl}
-              onChange={(event) => handleChange("githubApiBaseUrl", event.target.value)}
-              placeholder="https://api.github.com"
+              onChange={event => handleChange('githubApiBaseUrl', event.target.value)}
+              placeholder='https://api.github.com'
             />
           </div>
           <div className={styles.formGroup}>
-            <label htmlFor="settings-cache-dir">Cache directory</label>
+            <label htmlFor='settings-cache-dir'>Cache directory</label>
             <input
-              id="settings-cache-dir"
-              type="text"
+              id='settings-cache-dir'
+              type='text'
               value={form.cacheDir}
-              onChange={(event) => handleChange("cacheDir", event.target.value)}
-              placeholder=".cache"
+              onChange={event => handleChange('cacheDir', event.target.value)}
+              placeholder='.cache'
             />
           </div>
           <div className={styles.formGroup}>
-            <label htmlFor="settings-config-path">Config file</label>
-            <input id="settings-config-path" type="text" value={configPath} disabled />
+            <label htmlFor='settings-config-path'>Config file</label>
+            <input id='settings-config-path' type='text' value={configPath} disabled />
           </div>
         </div>
 
         <div className={styles.checkboxRow}>
           <label>
-            <input
-              type="checkbox"
-              checked={form.disableCache}
-              onChange={(event) => handleChange("disableCache", event.target.checked)}
-            />
+            <input type='checkbox' checked={form.disableCache} onChange={event => handleChange('disableCache', event.target.checked)} />
             Disable summary cache
           </label>
           <label>
-            <input
-              type="checkbox"
-              checked={form.ignoreArchived}
-              onChange={(event) => handleChange("ignoreArchived", event.target.checked)}
-            />
+            <input type='checkbox' checked={form.ignoreArchived} onChange={event => handleChange('ignoreArchived', event.target.checked)} />
             Ignore archived repositories
           </label>
         </div>
 
         <div className={styles.actions}>
-          <button
-            type="button"
-            className={styles.secondaryButton}
-            onClick={handleReset}
-            disabled={!dirty || saving}
-          >
+          <button type='button' className={styles.secondaryButton} onClick={handleReset} disabled={!dirty || saving}>
             Reset
           </button>
-          <button
-            type="button"
-            className={styles.primaryButton}
-            onClick={handleSubmit}
-            disabled={saving || !dirty}
-          >
-            {saving ? "Saving…" : "Save changes"}
+          <button type='button' className={styles.primaryButton} onClick={handleSubmit} disabled={saving || !dirty}>
+            {saving ? 'Saving…' : 'Save changes'}
           </button>
         </div>
 
         <div className={styles.infoFooter}>
-          Changes are written directly to the configuration file. Some updates may
-          require refreshing cached data via the Repositories page.
+          Changes are written directly to the configuration file. Some updates may require refreshing cached data via the Repositories page.
         </div>
       </div>
     </div>

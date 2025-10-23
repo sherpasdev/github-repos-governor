@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type SVGProps } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type SVGProps } from 'react';
 
 import {
   applyGovernanceActions,
@@ -7,48 +7,13 @@ import {
   type GovernanceActionPayload,
   type GovernanceResponse,
   type RefreshSummaryResponse,
-} from "@/services/api";
-import infoIcon from "@/assets/information.png";
-import type { RepoSnapshot } from "@/lib/repoSnapshot";
-import { EventsOn } from "../../../wailsjs/runtime/runtime";
-import styles from "./RepositoriesView.module.css";
-
-type RepositoriesViewProps = {
-  envReady: boolean;
-  organization: string | null;
-  missingFields: string[];
-  configPath?: string | null;
-  onSelectRepository: (repoName: string) => void;
-  onNotify?: (notification: { type: "success" | "error"; message: string }) => void;
-};
-
-type RepoRow = {
-  id: number;
-  name: string;
-  fullName: string;
-  htmlUrl: string;
-  defaultBranch: string;
-  defaultBranchLastPush: string | null;
-  advancedSecurity: boolean | null;
-  advancedSecurityStatus: string | null;
-  dependencyGraph: boolean | null;
-  dependencyGraphStatus: string | null;
-  branchProtected: boolean;
-  approvalsRequired: number | null;
-  statusChecks: string;
-  forcePushAllowed: boolean | null;
-  deleteBranchOnMerge: boolean | null;
-  allowAutoMerge: boolean | null;
-  allowUpdateBranch: boolean | null;
-};
-
-type RepoSettingField = "deleteBranchOnMerge" | "allowAutoMerge" | "allowUpdateBranch";
-
-type ActionState = {
-  working: boolean;
-  message: string | null;
-  error: string | null;
-};
+} from '@/services/api';
+import type { RepoSnapshot } from '@/lib/repoSnapshot';
+import { EventsOn } from '../../../wailsjs/runtime/runtime';
+import styles from './RepositoriesView.module.css';
+import { InfoTooltip } from './InfoTooltip';
+import { ActionState, RepoRow, RepoSettingField, RepositoriesViewProps } from './types';
+import { describeSetting, renderBoolean, renderForcePush, renderLastPush, renderSecurity } from './utils';
 
 const INITIAL_ACTION_STATE: ActionState = {
   working: false,
@@ -56,14 +21,7 @@ const INITIAL_ACTION_STATE: ActionState = {
   error: null,
 };
 
-export function RepositoriesView({
-  envReady,
-  organization,
-  missingFields,
-  configPath,
-  onSelectRepository,
-  onNotify,
-}: RepositoriesViewProps) {
+export function RepositoriesView({ envReady, organization, missingFields, configPath, onSelectRepository, onNotify }: RepositoriesViewProps) {
   const [snapshot, setSnapshot] = useState<RepoSnapshot | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -75,19 +33,19 @@ export function RepositoriesView({
   const [isGovernanceOpen, setGovernanceOpen] = useState(false);
   const [activeMutation, setActiveMutation] = useState<{ repoId: number; field: RepoSettingField } | null>(null);
   const [actionState, setActionState] = useState<ActionState>(INITIAL_ACTION_STATE);
-  const [defaultBranchTarget, setDefaultBranchTarget] = useState("main");
+  const [defaultBranchTarget, setDefaultBranchTarget] = useState('main');
   const [approvalsRequired, setApprovalsRequired] = useState(1);
   const [dismissStaleReviews, setDismissStaleReviews] = useState(true);
   const [requireCodeOwners, setRequireCodeOwners] = useState(true);
   const [strictStatusChecks, setStrictStatusChecks] = useState(true);
-  const [statusCheckContexts, setStatusCheckContexts] = useState("build, test");
+  const [statusCheckContexts, setStatusCheckContexts] = useState('build, test');
   const [restrictForcePushes, setRestrictForcePushes] = useState(true);
   const [requireUpToDate, setRequireUpToDate] = useState(true);
   const [deleteBranchOnMerge, setDeleteBranchOnMerge] = useState(true);
   const [allowUpdateBranch, setAllowUpdateBranch] = useState(true);
   const [allowAutoMerge, setAllowAutoMerge] = useState(true);
 
-  const configTarget = configPath && configPath.length > 0 ? configPath : "config/config.json";
+  const configTarget = configPath && configPath.length > 0 ? configPath : 'config/config.json';
 
   const handleRefresh = useCallback(() => {
     if (isRefreshing) {
@@ -100,8 +58,8 @@ export function RepositoriesView({
     setIsRefreshing(true);
     setLoading(true);
 
-    const off = EventsOn("governor:refresh-log", (message: string) => {
-      setLogEntries((prev) => [...prev, String(message)]);
+    const off = EventsOn('governor:refresh-log', (message: string) => {
+      setLogEntries(prev => [...prev, String(message)]);
     });
 
     refreshOrganizationSummary()
@@ -139,7 +97,7 @@ export function RepositoriesView({
     setError(null);
 
     getOrganizationSummary()
-      .then((response) => {
+      .then(response => {
         setSnapshot(response.summary);
       })
       .catch((err: Error) => {
@@ -153,7 +111,7 @@ export function RepositoriesView({
 
   useEffect(() => {
     if (logEndRef.current) {
-      logEndRef.current.scrollIntoView({ behavior: "smooth" });
+      logEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [logEntries]);
 
@@ -162,7 +120,7 @@ export function RepositoriesView({
       return;
     }
     if (snapshot.defaultBranches.length > 0) {
-      setDefaultBranchTarget((prev) => (prev ? prev : snapshot.defaultBranches[0].name));
+      setDefaultBranchTarget(prev => (prev ? prev : snapshot.defaultBranches[0].name));
     }
   }, [snapshot]);
 
@@ -174,7 +132,7 @@ export function RepositoriesView({
     }
 
     return repoPolicies
-      .map((policy) => {
+      .map(policy => {
         const branch = policy.branchProtection ?? {
           enabled: false,
           requiredApprovingReviewCount: null,
@@ -184,9 +142,7 @@ export function RepositoriesView({
           requireCodeOwnerReviews: false,
         };
         const statusContextCount = branch.requiredStatusChecks?.contexts.length ?? 0;
-        const statusChecksLabel = branch.requiredStatusChecks
-          ? `${statusContextCount} ${statusContextCount === 1 ? "check" : "checks"}`
-          : "None";
+        const statusChecksLabel = branch.requiredStatusChecks ? `${statusContextCount} ${statusContextCount === 1 ? 'check' : 'checks'}` : 'None';
 
         return {
           id: policy.id,
@@ -271,7 +227,7 @@ export function RepositoriesView({
 
   const formatCoverage = useCallback((count: number, total: number) => {
     if (total === 0) {
-      return "0%";
+      return '0%';
     }
     const percent = (count / total) * 100;
     return `${percent.toFixed(percent === 100 || percent === 0 ? 0 : 1)}%`;
@@ -285,7 +241,7 @@ export function RepositoriesView({
 
       setActiveMutation({ repoId: row.id, field });
 
-      const repoSettings: NonNullable<GovernanceActionPayload["repoSettings"]> = {};
+      const repoSettings: NonNullable<GovernanceActionPayload['repoSettings']> = {};
       repoSettings[field] = nextValue;
 
       try {
@@ -294,23 +250,23 @@ export function RepositoriesView({
           repos: [row.fullName],
         });
 
-        const targetResult = response.results.find((item) => {
+        const targetResult = response.results.find(item => {
           if (item.repoId && item.repoId === row.id) {
             return true;
           }
           if (item.repo) {
             return (
-              item.repo.localeCompare(row.fullName, undefined, { sensitivity: "accent" }) === 0 ||
-              item.repo.localeCompare(row.name, undefined, { sensitivity: "accent" }) === 0
+              item.repo.localeCompare(row.fullName, undefined, { sensitivity: 'accent' }) === 0 ||
+              item.repo.localeCompare(row.name, undefined, { sensitivity: 'accent' }) === 0
             );
           }
           return false;
         });
 
         if (!targetResult || !targetResult.success) {
-          const reason = targetResult?.message ?? "Unable to update repository setting.";
+          const reason = targetResult?.message ?? 'Unable to update repository setting.';
           onNotify?.({
-            type: "error",
+            type: 'error',
             message: `${row.name}: ${reason}`,
           });
           if (response.snapshot) {
@@ -322,28 +278,27 @@ export function RepositoriesView({
         if (response.snapshot) {
           setSnapshot(response.snapshot);
         } else {
-          setSnapshot((prev) => {
+          setSnapshot(prev => {
             if (!prev) {
               return prev;
             }
-            const policies = prev.governance.repoPolicies.map((policy) => {
+            const policies = prev.governance.repoPolicies.map(policy => {
               if (policy.id !== row.id) {
                 return policy;
               }
               const changes = targetResult.changes ?? {};
               switch (field) {
-                case "deleteBranchOnMerge":
+                case 'deleteBranchOnMerge':
                   return {
                     ...policy,
-                    deleteBranchOnMerge:
-                      changes.deleteBranchOnMerge ?? nextValue,
+                    deleteBranchOnMerge: changes.deleteBranchOnMerge ?? nextValue,
                   };
-                case "allowAutoMerge":
+                case 'allowAutoMerge':
                   return {
                     ...policy,
                     allowAutoMerge: changes.allowAutoMerge ?? nextValue,
                   };
-                case "allowUpdateBranch":
+                case 'allowUpdateBranch':
                   return {
                     ...policy,
                     allowUpdateBranch: changes.allowUpdateBranch ?? nextValue,
@@ -364,12 +319,12 @@ export function RepositoriesView({
 
         const message = targetResult.message ?? describeSetting(field, nextValue);
         onNotify?.({
-          type: "success",
+          type: 'success',
           message: `${row.name}: ${message}`,
         });
       } catch (err) {
         onNotify?.({
-          type: "error",
+          type: 'error',
           message: (err as Error).message,
         });
       } finally {
@@ -393,7 +348,7 @@ export function RepositoriesView({
           setSnapshot(refreshed.summary);
         } catch (err) {
           onNotify?.({
-            type: "error",
+            type: 'error',
             message: (err as Error).message,
           });
         }
@@ -406,7 +361,7 @@ export function RepositoriesView({
         error: null,
       });
       onNotify?.({
-        type: failures > 0 ? "error" : "success",
+        type: failures > 0 ? 'error' : 'success',
         message,
       });
     },
@@ -417,7 +372,7 @@ export function RepositoriesView({
     if (!snapshot) {
       return;
     }
-    const repoNames = snapshot.governance.repoPolicies.map((item) => item.fullName);
+    const repoNames = snapshot.governance.repoPolicies.map(item => item.fullName);
     if (repoNames.length === 0) {
       return;
     }
@@ -430,8 +385,8 @@ export function RepositoriesView({
         requireCodeOwners,
         strictStatusChecks,
         statusCheckContexts: statusCheckContexts
-          .split(",")
-          .map((context) => context.trim())
+          .split(',')
+          .map(context => context.trim())
           .filter(Boolean),
         restrictForcePushes,
         requireUpToDate,
@@ -461,7 +416,7 @@ export function RepositoriesView({
         error: message,
       });
       onNotify?.({
-        type: "error",
+        type: 'error',
         message,
       });
     }
@@ -488,11 +443,7 @@ export function RepositoriesView({
         <h2>Configuration required</h2>
         <p>
           Provide the required values via the Settings tab. They will be saved to <code>{configTarget}</code>.
-          {missingFields.length > 0 ? (
-            <> Missing keys: {missingFields.join(", ")}.</>
-          ) : (
-            <> Ensure githubToken and githubOrg are set.</>
-          )}
+          {missingFields.length > 0 ? <> Missing keys: {missingFields.join(', ')}.</> : <> Ensure githubToken and githubOrg are set.</>}
         </p>
       </div>
     );
@@ -511,47 +462,44 @@ export function RepositoriesView({
     <div className={styles.container}>
       {governanceStats ? (
         <div className={styles.governanceWidget}>
-          <button
-            type="button"
-            className={styles.governanceToggle}
-            onClick={() => setGovernanceOpen((open) => !open)}
-          >
+          <button type='button' className={styles.governanceToggle} onClick={() => setGovernanceOpen(open => !open)}>
             <div>
               <span className={styles.governanceTitle}>Governance</span>
               <span className={styles.governanceSubtitle}>
-                Branch protection {governanceStats.protectedCount}/{governanceStats.total} • Auto merge{" "}
-                {governanceStats.autoMergeCount}/{governanceStats.total} • Delete branch on merge{" "}
-                {governanceStats.deleteBranchCount}/{governanceStats.total} • Allow branch updates{" "}
+                Branch protection {governanceStats.protectedCount}/{governanceStats.total} • Auto merge {governanceStats.autoMergeCount}/
+                {governanceStats.total} • Delete branch on merge {governanceStats.deleteBranchCount}/{governanceStats.total} • Allow branch updates{' '}
                 {governanceStats.updateBranchCount}/{governanceStats.total}
               </span>
             </div>
-            <span className={styles.governanceCaret} aria-hidden>{isGovernanceOpen ? "▴" : "▾"}</span>
+            <span className={styles.governanceCaret} aria-hidden>
+              {isGovernanceOpen ? '▴' : '▾'}
+            </span>
           </button>
           {isGovernanceOpen ? (
             <div className={styles.governancePanel}>
               <div className={styles.governanceStatsGrid}>
                 <GovernanceStat
-                  label="Branch protection enabled"
+                  label='Branch protection enabled'
                   value={`${governanceStats.protectedCount}/${governanceStats.total}`}
                   coverage={formatCoverage(governanceStats.protectedCount, governanceStats.total)}
                 />
                 <GovernanceStat
-                  label="Force pushes restricted"
+                  label='Force pushes restricted'
                   value={`${governanceStats.restrictForcePushCount}/${governanceStats.total}`}
                   coverage={formatCoverage(governanceStats.restrictForcePushCount, governanceStats.total)}
                 />
                 <GovernanceStat
-                  label="Delete branch on merge"
+                  label='Delete branch on merge'
                   value={`${governanceStats.deleteBranchCount}/${governanceStats.total}`}
                   coverage={formatCoverage(governanceStats.deleteBranchCount, governanceStats.total)}
                 />
                 <GovernanceStat
-                  label="Auto merge enabled"
+                  label='Auto merge enabled'
                   value={`${governanceStats.autoMergeCount}/${governanceStats.total}`}
                   coverage={formatCoverage(governanceStats.autoMergeCount, governanceStats.total)}
                 />
                 <GovernanceStat
-                  label="Allow branch updates"
+                  label='Allow branch updates'
                   value={`${governanceStats.updateBranchCount}/${governanceStats.total}`}
                   coverage={formatCoverage(governanceStats.updateBranchCount, governanceStats.total)}
                 />
@@ -560,115 +508,81 @@ export function RepositoriesView({
                 <h3>Policies to apply</h3>
                 <div className={styles.governancePrimaryRow}>
                   <div className={styles.governanceFormGroup}>
-                    <label htmlFor="inline-default-branch">Target default branch</label>
+                    <label htmlFor='inline-default-branch'>Target default branch</label>
                     <input
-                      id="inline-default-branch"
-                      type="text"
+                      id='inline-default-branch'
+                      type='text'
                       value={defaultBranchTarget}
-                      onChange={(event) => setDefaultBranchTarget(event.target.value)}
+                      onChange={event => setDefaultBranchTarget(event.target.value)}
                     />
                   </div>
                   <div className={styles.governanceFormGroup}>
-                    <label htmlFor="inline-approvals">Approvals required</label>
+                    <label htmlFor='inline-approvals'>Approvals required</label>
                     <input
-                      id="inline-approvals"
-                      type="number"
+                      id='inline-approvals'
+                      type='number'
                       min={0}
                       value={approvalsRequired}
-                      onChange={(event) =>
-                        setApprovalsRequired(Number.parseInt(event.target.value, 10) || 0)
-                      }
+                      onChange={event => setApprovalsRequired(Number.parseInt(event.target.value, 10) || 0)}
                     />
                   </div>
                   <div className={styles.governanceFormGroup}>
-                    <label htmlFor="inline-status-checks">Require status checks</label>
+                    <label htmlFor='inline-status-checks'>Require status checks</label>
                     <input
-                      id="inline-status-checks"
-                      type="text"
+                      id='inline-status-checks'
+                      type='text'
                       value={statusCheckContexts}
-                      onChange={(event) => setStatusCheckContexts(event.target.value)}
-                      placeholder="build, test"
+                      onChange={event => setStatusCheckContexts(event.target.value)}
+                      placeholder='build, test'
                     />
                   </div>
                 </div>
                 <div className={styles.governanceCheckboxRow}>
                   <label>
-                    <input
-                      type="checkbox"
-                      checked={dismissStaleReviews}
-                      onChange={(event) => setDismissStaleReviews(event.target.checked)}
-                    />
+                    <input type='checkbox' checked={dismissStaleReviews} onChange={event => setDismissStaleReviews(event.target.checked)} />
                     Dismiss stale reviews
                   </label>
                   <label>
-                    <input
-                      type="checkbox"
-                      checked={requireCodeOwners}
-                      onChange={(event) => setRequireCodeOwners(event.target.checked)}
-                    />
+                    <input type='checkbox' checked={requireCodeOwners} onChange={event => setRequireCodeOwners(event.target.checked)} />
                     Require code owner reviews
                   </label>
                   <label>
-                    <input
-                      type="checkbox"
-                      checked={strictStatusChecks}
-                      onChange={(event) => setStrictStatusChecks(event.target.checked)}
-                    />
+                    <input type='checkbox' checked={strictStatusChecks} onChange={event => setStrictStatusChecks(event.target.checked)} />
                     Status checks must be up to date
                   </label>
                 </div>
                 <div className={styles.governanceCheckboxRow}>
                   <label>
-                    <input
-                      type="checkbox"
-                      checked={restrictForcePushes}
-                      onChange={(event) => setRestrictForcePushes(event.target.checked)}
-                    />
+                    <input type='checkbox' checked={restrictForcePushes} onChange={event => setRestrictForcePushes(event.target.checked)} />
                     Restrict force pushes
                   </label>
                   <label>
-                    <input
-                      type="checkbox"
-                      checked={requireUpToDate}
-                      onChange={(event) => setRequireUpToDate(event.target.checked)}
-                    />
+                    <input type='checkbox' checked={requireUpToDate} onChange={event => setRequireUpToDate(event.target.checked)} />
                     Require branch to be up to date
                   </label>
                 </div>
                 <hr className={styles.governanceDivider} />
                 <div className={styles.governanceCheckboxRow}>
                   <label>
-                    <input
-                      type="checkbox"
-                      checked={deleteBranchOnMerge}
-                      onChange={(event) => setDeleteBranchOnMerge(event.target.checked)}
-                    />
+                    <input type='checkbox' checked={deleteBranchOnMerge} onChange={event => setDeleteBranchOnMerge(event.target.checked)} />
                     Delete branches on merge
                   </label>
                   <label>
-                    <input
-                      type="checkbox"
-                      checked={allowAutoMerge}
-                      onChange={(event) => setAllowAutoMerge(event.target.checked)}
-                    />
+                    <input type='checkbox' checked={allowAutoMerge} onChange={event => setAllowAutoMerge(event.target.checked)} />
                     Allow auto-merge
                   </label>
                   <label>
-                    <input
-                      type="checkbox"
-                      checked={allowUpdateBranch}
-                      onChange={(event) => setAllowUpdateBranch(event.target.checked)}
-                    />
+                    <input type='checkbox' checked={allowUpdateBranch} onChange={event => setAllowUpdateBranch(event.target.checked)} />
                     Allow update branch
                   </label>
                 </div>
                 <button
-                  type="button"
+                  type='button'
                   className={styles.governanceApplyButton}
                   onClick={handleInlineApply}
                   disabled={actionState.working || repoPolicies.length === 0}
                 >
-                  {actionState.working ? "Applying policies…" : "Apply policies"}
+                  {actionState.working ? 'Applying policies…' : 'Apply policies'}
                 </button>
                 {actionState.error ? (
                   <div className={styles.governanceErrorText}>{actionState.error}</div>
@@ -683,19 +597,10 @@ export function RepositoriesView({
       <div className={styles.headerRow}>
         <div>
           <h1>Repositories</h1>
-          <p>
-            {loading
-              ? "Fetching latest repository policies…"
-              : `${rows.length} repositories from ${organization ?? "unknown organisation"}.`}
-          </p>
+          <p>{loading ? 'Fetching latest repository policies…' : `${rows.length} repositories from ${organization ?? 'unknown organisation'}.`}</p>
           <p className={styles.tableNote}>Last push reflects the most recent commit on the default branch.</p>
         </div>
-        <button
-          type="button"
-          className={styles.refreshButton}
-          onClick={handleRefresh}
-          disabled={loading || isRefreshing}
-        >
+        <button type='button' className={styles.refreshButton} onClick={handleRefresh} disabled={loading || isRefreshing}>
           Refresh
         </button>
       </div>
@@ -712,9 +617,9 @@ export function RepositoriesView({
                 <div className={styles.headerLabel}>
                   <span>Required Status Checks</span>
                   <InfoTooltip
-                    info="Require status checks to pass before merging pull requests."
-                    docsUrl="https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/defining-the-merge-methods-you-allow-for-your-pull-requests/requiring-status-checks-before-merging"
-                    docsLabel="GitHub docs"
+                    info='Require status checks to pass before merging pull requests.'
+                    docsUrl='https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/defining-the-merge-methods-you-allow-for-your-pull-requests/requiring-status-checks-before-merging'
+                    docsLabel='GitHub docs'
                   />
                 </div>
               </th>
@@ -723,9 +628,9 @@ export function RepositoriesView({
                 <div className={styles.headerLabel}>
                   <span>Delete Branch on Merge</span>
                   <InfoTooltip
-                    info="Automatically delete head branches after pull requests merge."
-                    docsUrl="https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/managing-repository-settings/managing-the-automatic-deletion-of-branches"
-                    docsLabel="GitHub docs"
+                    info='Automatically delete head branches after pull requests merge.'
+                    docsUrl='https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/managing-repository-settings/managing-the-automatic-deletion-of-branches'
+                    docsLabel='GitHub docs'
                   />
                 </div>
               </th>
@@ -734,9 +639,9 @@ export function RepositoriesView({
                 <div className={styles.headerLabel}>
                   <span>Allow Branch Updates</span>
                   <InfoTooltip
-                    info="Enable the Update branch button so pull requests can sync with the base branch."
-                    docsUrl="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/updating-a-pull-request-branch"
-                    docsLabel="GitHub docs"
+                    info='Enable the Update branch button so pull requests can sync with the base branch.'
+                    docsUrl='https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/updating-a-pull-request-branch'
+                    docsLabel='GitHub docs'
                   />
                 </div>
               </th>
@@ -758,81 +663,63 @@ export function RepositoriesView({
                 </td>
               </tr>
             ) : (
-              rows.map((row) => (
+              rows.map(row => (
                 <tr key={row.id}>
                   <td>
                     <div className={styles.repoCell}>
                       <div className={styles.repoHeader}>
                         <a
                           href={row.htmlUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                          target='_blank'
+                          rel='noopener noreferrer'
                           className={styles.repoExternalLink}
                           aria-label={`Open ${row.fullName} on GitHub`}
                           title={row.fullName}
                         >
                           <GitHubIcon />
                         </a>
-                        <button
-                          type="button"
-                          className={styles.repoNameButton}
-                          onClick={() => onSelectRepository(row.name)}
-                        >
+                        <button type='button' className={styles.repoNameButton} onClick={() => onSelectRepository(row.name)}>
                           {row.name}
                         </button>
                       </div>
                     </div>
                   </td>
-                 <td>{row.defaultBranch}</td>
-                 <td>{renderLastPush(row.defaultBranchLastPush)}</td>
+                  <td>{row.defaultBranch}</td>
+                  <td>{renderLastPush(row.defaultBranchLastPush)}</td>
                   <td>{renderBoolean(row.branchProtected)}</td>
-                  <td>{row.approvalsRequired ?? "—"}</td>
+                  <td>{row.approvalsRequired ?? '—'}</td>
                   <td>{row.statusChecks}</td>
                   <td>{renderForcePush(row.forcePushAllowed)}</td>
                   <td>
                     <RepoSettingToggle
                       value={row.deleteBranchOnMerge}
-                      onToggle={(next) => handleRepoSettingToggle(row, "deleteBranchOnMerge", next)}
+                      onToggle={next => handleRepoSettingToggle(row, 'deleteBranchOnMerge', next)}
                       disabled={
-                        loading ||
-                        Boolean(
-                          activeMutation &&
-                            !(activeMutation.repoId === row.id && activeMutation.field === "deleteBranchOnMerge")
-                        )
+                        loading || Boolean(activeMutation && !(activeMutation.repoId === row.id && activeMutation.field === 'deleteBranchOnMerge'))
                       }
-                      loading={
-                        activeMutation?.repoId === row.id && activeMutation.field === "deleteBranchOnMerge"
-                      }
+                      loading={activeMutation?.repoId === row.id && activeMutation.field === 'deleteBranchOnMerge'}
                       ariaLabel={`Toggle delete branch on merge for ${row.name}`}
                     />
                   </td>
                   <td>
                     <RepoSettingToggle
                       value={row.allowAutoMerge}
-                      onToggle={(next) => handleRepoSettingToggle(row, "allowAutoMerge", next)}
+                      onToggle={next => handleRepoSettingToggle(row, 'allowAutoMerge', next)}
                       disabled={
-                        loading ||
-                        Boolean(
-                          activeMutation &&
-                            !(activeMutation.repoId === row.id && activeMutation.field === "allowAutoMerge")
-                        )
+                        loading || Boolean(activeMutation && !(activeMutation.repoId === row.id && activeMutation.field === 'allowAutoMerge'))
                       }
-                      loading={activeMutation?.repoId === row.id && activeMutation.field === "allowAutoMerge"}
+                      loading={activeMutation?.repoId === row.id && activeMutation.field === 'allowAutoMerge'}
                       ariaLabel={`Toggle auto merge for ${row.name}`}
                     />
                   </td>
                   <td>
                     <RepoSettingToggle
                       value={row.allowUpdateBranch}
-                      onToggle={(next) => handleRepoSettingToggle(row, "allowUpdateBranch", next)}
+                      onToggle={next => handleRepoSettingToggle(row, 'allowUpdateBranch', next)}
                       disabled={
-                        loading ||
-                        Boolean(
-                          activeMutation &&
-                            !(activeMutation.repoId === row.id && activeMutation.field === "allowUpdateBranch")
-                        )
+                        loading || Boolean(activeMutation && !(activeMutation.repoId === row.id && activeMutation.field === 'allowUpdateBranch'))
                       }
-                      loading={activeMutation?.repoId === row.id && activeMutation.field === "allowUpdateBranch"}
+                      loading={activeMutation?.repoId === row.id && activeMutation.field === 'allowUpdateBranch'}
                       ariaLabel={`Toggle allow branch updates for ${row.name}`}
                     />
                   </td>
@@ -859,13 +746,8 @@ export function RepositoriesView({
             </div>
             {refreshError ? <div className={styles.errorText}>{refreshError}</div> : null}
             <div className={styles.modalFooter}>
-              <button
-                type="button"
-                className={styles.closeButton}
-                onClick={handleCloseModal}
-                disabled={isRefreshing}
-              >
-                {isRefreshing ? "Refreshing…" : "Close"}
+              <button type='button' className={styles.closeButton} onClick={handleCloseModal} disabled={isRefreshing}>
+                {isRefreshing ? 'Refreshing…' : 'Close'}
               </button>
             </div>
           </div>
@@ -873,146 +755,6 @@ export function RepositoriesView({
       ) : null}
     </div>
   );
-}
-
-function renderBoolean(value: boolean | null | undefined) {
-  if (value === true) {
-    return <span className={styles.booleanYes}>Yes</span>;
-  }
-  if (value === false) {
-    return <span className={styles.booleanNo}>No</span>;
-  }
-  return <span className={styles.booleanUnknown}>Unknown</span>;
-}
-
-function renderForcePush(value: boolean | null | undefined) {
-  if (value === null || value === undefined) {
-    return <span className={styles.booleanUnknown}>Unknown</span>;
-  }
-  return value ? (
-    <span className={styles.booleanNo}>Allowed</span>
-  ) : (
-    <span className={styles.booleanYes}>Blocked</span>
-  );
-}
-
-function renderLastPush(iso: string | null) {
-  if (!iso) {
-    return <span className={styles.booleanUnknown}>Unknown</span>;
-  }
-  const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) {
-    return <span className={styles.booleanUnknown}>Unknown</span>;
-  }
-  return date.toLocaleString();
-}
-
-function renderSecurity(isEnabled: boolean | null, status?: string) {
-  const parsed = parseStatus(status ?? "");
-  const label = parsed?.label;
-  const detail = parsed?.detail;
-  const className = determineSecurityClass(isEnabled, label);
-
-  if (!label) {
-    if (isEnabled === null) {
-      return <span className={styles.booleanUnknown}>Unknown</span>;
-    }
-    return isEnabled ? (
-      <span className={styles.booleanYes}>Enabled</span>
-    ) : (
-      <span className={styles.booleanNo}>Disabled</span>
-    );
-  }
-
-  return (
-    <span className={className} title={status ?? label}>
-      {label}
-      {detail ? <span className={styles.securityDetail}>{detail}</span> : null}
-    </span>
-  );
-}
-
-function determineSecurityClass(isEnabled: boolean | null, label?: string) {
-  if (isEnabled === true || label?.toLowerCase().startsWith("enabled")) {
-    return styles.securityStatusPositive;
-  }
-  if (isEnabled === false || label?.toLowerCase().startsWith("disabled")) {
-    return styles.securityStatusNegative;
-  }
-  return styles.securityStatusNeutral;
-}
-
-function parseStatus(raw: string) {
-  const trimmed = raw.trim();
-  if (!trimmed) {
-    return undefined;
-  }
-
-  const lower = trimmed.toLowerCase();
-  const baseDetail = (value: string) => value.replace(/[_-]/g, " ").trim();
-  const capitalise = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
-
-  if (lower.startsWith("enabled")) {
-    const suffix = baseDetail(lower.replace(/^enabled[_-]?/, ""));
-    const detail = mapDetail(suffix);
-    return {
-      label: "Enabled",
-      detail,
-    };
-  }
-
-  if (lower.startsWith("disabled")) {
-    const suffix = baseDetail(lower.replace(/^disabled[_-]?/, ""));
-    const detail = mapDetail(suffix);
-    return {
-      label: "Disabled",
-      detail,
-    };
-  }
-
-  if (lower.startsWith("not_available")) {
-    return { label: "Not available" };
-  }
-
-  if (lower.startsWith("not_supported") || lower.startsWith("unsupported")) {
-    return { label: "Not supported" };
-  }
-
-  if (lower.startsWith("required")) {
-    return { label: "Required" };
-  }
-
-  return { label: capitalise(trimmed.replace(/[_-]/g, " ")) };
-}
-
-function mapDetail(detail: string) {
-  const cleaned = detail.toLowerCase();
-  switch (cleaned) {
-    case "":
-      return undefined;
-    case "on":
-      return "Default setup";
-    case "managed":
-      return "Managed";
-    case "managed default":
-      return "Managed default";
-    case "by org policy":
-      return "By org policy";
-    case "by enterprise policy":
-      return "By enterprise policy";
-    default:
-      return cleaned.replace(/\b\w/g, (match) => match.toUpperCase());
-  }
-}
-
-function describeSetting(field: RepoSettingField, enabled: boolean) {
-  const labelMap: Record<RepoSettingField, string> = {
-    deleteBranchOnMerge: "delete branch on merge",
-    allowAutoMerge: "auto merge",
-    allowUpdateBranch: "allow branch updates",
-  };
-  const action = enabled ? "Enabled" : "Disabled";
-  return `${action} ${labelMap[field]}`;
 }
 
 type GovernanceStatProps = {
@@ -1045,13 +787,11 @@ function RepoSettingToggle({ value, onToggle, disabled, loading, ariaLabel }: Re
   }
 
   const active = value === true;
-  const className = active
-    ? `${styles.toggleButton} ${styles.toggleOn}`
-    : `${styles.toggleButton} ${styles.toggleOff}`;
+  const className = active ? `${styles.toggleButton} ${styles.toggleOn}` : `${styles.toggleButton} ${styles.toggleOff}`;
 
   return (
     <button
-      type="button"
+      type='button'
       className={className}
       onClick={() => onToggle(!active)}
       disabled={disabled || loading}
@@ -1059,9 +799,9 @@ function RepoSettingToggle({ value, onToggle, disabled, loading, ariaLabel }: Re
       aria-label={ariaLabel}
     >
       <span className={styles.toggleTrack}>
-        <span className={styles.toggleThumb} data-state={active ? "on" : "off"} />
+        <span className={styles.toggleThumb} data-state={active ? 'on' : 'off'} />
       </span>
-      <span className={styles.toggleText}>{loading ? "…" : active ? "Yes" : "No"}</span>
+      <span className={styles.toggleText}>{loading ? '…' : active ? 'Yes' : 'No'}</span>
     </button>
   );
 }
@@ -1070,39 +810,8 @@ type GitHubIconProps = SVGProps<SVGSVGElement>;
 
 function GitHubIcon({ className, ...rest }: GitHubIconProps) {
   return (
-    <svg
-      viewBox="0 0 16 16"
-      fill="currentColor"
-      aria-hidden="true"
-      className={className}
-      {...rest}
-    >
-      <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.01.08-2.11 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.91.08 2.11.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.94-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8Z" />
+    <svg viewBox='0 0 16 16' fill='currentColor' aria-hidden='true' className={className} {...rest}>
+      <path d='M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.01.08-2.11 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.91.08 2.11.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.94-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8Z' />
     </svg>
-  );
-}
-
-type InfoTooltipProps = {
-  info: string;
-  docsUrl: string;
-  docsLabel: string;
-};
-
-function InfoTooltip({ info, docsUrl, docsLabel }: InfoTooltipProps) {
-  return (
-    <span className={styles.infoWrapper} tabIndex={0} aria-label={`${info} Learn more: ${docsLabel}.`}>
-      <img src={infoIcon} alt="" aria-hidden className={styles.infoIcon} />
-      <span className={styles.infoTooltip} role="tooltip">
-        {info}
-        <a
-          href={docsUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={styles.infoTooltipLink}
-        >
-          {docsLabel}
-        </a>
-      </span>
-    </span>
   );
 }

@@ -1,0 +1,51 @@
+:root {
+  --color-turquoise: #51e0cf;
+  --color-gray-100: #767676;
+  --color-gray-150: #c1c1c1;
+  --color-gray-200: #122730;
+  --color-gray-250: #202020;
+  --color-gray-300: #0e0e0e;
+  --color-gray-350: #13262D;
+  --color-gray-400: #141414;
+  --color-gray-450: #0a0a0a;
+  --color-gray-500: rgba(30, 30, 30, 0.06);
+  --color-gray-600: rgba(30, 30, 30, 0.7);
+  --color-gray-650: #1A1A1A;
+  --color-gray-700: #242424;
+  --color-lightseagreen: #1fad9c;
+  --color-black: #000;
+  --color-cadetblue: #469794;
+  --color-white: #fff;
+  --color-dimgray: rgba(82, 82, 82, 0.06);
+  --color-darkgray: #aaa;
+  --color-darkgray-800: #282828;
+  --color-tomato: #B84242;
+  --color-tomato-dark: #712525;
+  --color-tomato-bright: #da2c2c;
+  --color-overlay-bg: rgba(255, 255, 255, 0.1);
+  --color-modal-overlay: rgba(0, 0, 0, 0.6);
+  --gradient-blue: linear-gradient(
+      -45deg,
+      var(--color-gray-200) 20%,
+      var(--color-cadetblue) 50%,
+      var(--color-gray-200) 80%
+    )
+    border-box;
+  --gradient-blue-reverse: linear-gradient(
+      45deg,
+      var(--color-gray-200) 20%,
+      var(--color-cadetblue) 50%,
+      var(--color-gray-200) 80%
+    )
+    border-box;
+  --gradient-purple: linear-gradient(-45deg, #150014 20%, #560052 50%, #150014 80%) border-box;
+  --gradient-gray: linear-gradient(-45deg, #525252 20%, #939393 50%, #525252 80%) border-box;
+  --gradient-beige: linear-gradient(-45deg, #eac287 20%, #fbc262 50%, #eac287 80%) border-box;
+  --gradient-red: linear-gradient(-45deg, #130505 0%, #562424 34%, #130505 100%) border-box;
+  --gradient-green: linear-gradient(-45deg, #005f2f 20%, #4caf50 50%, #005f2f 80%) border-box;
+
+
+  --toastify-color-progress-error: var(--color-tomato);
+  --toastify-color-progress-success: #00C55C;
+  --toastify-color-progress-info: #00C2FF;
+}

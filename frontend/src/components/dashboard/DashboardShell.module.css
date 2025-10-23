@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
-  padding: 32px 40px 48px;
+  padding: 2px 40px 8px;
   margin: 0 auto;
   max-width: 1200px;
 }
@@ -21,7 +21,7 @@
 }
 
 .title {
-  font-size: clamp(28px, 4vw, 40px);
+  font-size: clamp(24px, 4vw, 28px);
   font-weight: 600;
   line-height: 1.1;
 }
@@ -41,10 +41,7 @@
 }
 
 .panel {
-  border: 1px solid rgba(148, 163, 184, 0.35);
   border-radius: 18px;
-  padding: 32px 28px;
-  background: rgba(241, 245, 249, 0.35);
   display: flex;
   flex-direction: column;
   gap: 16px;

@@ -4,16 +4,19 @@
   gap: 24px;
 }
 
-.governanceWidget {
-  border: 1px solid rgba(148, 163, 184, 0.35);
-  border-radius: 20px;
-  background: rgba(248, 250, 252, 0.92);
-  box-shadow:
-    0 18px 40px rgba(15, 23, 42, 0.08),
-    0 6px 16px rgba(15, 23, 42, 0.05);
-  overflow: hidden;
+
+ .governanceWidget {
+	padding-top: 25px;
+  padding: 15px;
   display: flex;
-  flex-direction: column;
+	flex-direction: column;
+  overflow: hidden;
+	gap: 5px;
+	border-radius: 20px;
+	border-width: 1px 1px 3px 1px;
+	border-style: solid;
+	border-color: transparent;
+	background: linear-gradient(#141414, #141414) padding-box, var(--gradient-blue);
 }
 
 .governanceToggle {
@@ -29,27 +32,22 @@
   text-align: left;
 }
 
-.governanceToggle:hover {
-  background: rgba(226, 232, 240, 0.35);
-}
+
 
 .governanceTitle {
   display: block;
   font-size: 16px;
   font-weight: 600;
-  color: rgba(30, 41, 59, 0.92);
 }
 
 .governanceSubtitle {
   display: block;
   font-size: 13px;
-  color: rgba(51, 65, 85, 0.78);
   margin-top: 4px;
 }
 
 .governanceCaret {
   font-size: 18px;
-  color: rgba(51, 65, 85, 0.7);
 }
 
 .governancePanel {
@@ -67,10 +65,10 @@
 }
 
 .governanceStat {
-  border-radius: 16px;
-  border: 1px solid rgba(148, 163, 184, 0.25);
-  background: rgba(255, 255, 255, 0.9);
-  padding: 16px;
+  border-radius: 14px;
+  padding: 16px 18px;
+  box-shadow: 0 2px 0 1px rgba(0, 0, 0, .12) inset, 0 1px 10px 1px rgba(255, 255, 255, .06) inset;
+  background: var(--gradient-gray);
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -80,18 +78,15 @@
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: rgba(71, 85, 105, 0.7);
 }
 
 .governanceStatValue {
   font-size: 18px;
-  color: rgba(30, 41, 59, 0.92);
   font-weight: 600;
 }
 
 .governanceStatCoverage {
   font-size: 13px;
-  color: rgba(51, 65, 85, 0.65);
 }
 
 .governanceControls {
@@ -105,7 +100,6 @@
   margin: 0;
   font-size: 16px;
   font-weight: 600;
-  color: rgba(30, 41, 59, 0.9);
 }
 
 .governancePrimaryRow {
@@ -124,16 +118,21 @@
 .governanceFormGroup label {
   font-size: 12px;
   font-weight: 600;
-  color: rgba(71, 85, 105, 0.85);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .governanceFormGroup input {
-  border-radius: 10px;
-  border: 1px solid rgba(148, 163, 184, 0.45);
+  display: block;
+	width: 100%;
   padding: 9px 12px;
+  border-radius: 10px;
+  border: solid transparent;
+  border-width: 0.5px 1px 2px 0.5px;
+  background: linear-gradient(#141414, #141414) padding-box, var(--gradient-blue-reverse);
   font-size: 13px;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  color: var(--color-white);	
 }
 
 .governanceCheckboxRow {
@@ -147,7 +146,6 @@
   align-items: center;
   gap: 6px;
   font-size: 13px;
-  color: rgba(71, 85, 105, 0.9);
 }
 
 .governanceDivider {
@@ -162,7 +160,8 @@
   appearance: none;
   border: none;
   border-radius: 12px;
-  background: linear-gradient(135deg, rgba(37, 99, 235, 1), rgba(59, 130, 246, 0.9));
+  /* background: linear-gradient(135deg, rgba(37, 99, 235, 1), rgba(59, 130, 246, 0.9)); */
+  background: var(--gradient-blue);
   color: #fff;
   font-size: 14px;
   font-weight: 600;
@@ -211,6 +210,7 @@
   justify-content: space-between;
   gap: 16px;
   align-items: flex-end;
+  color: white;
 }
 
 .headerRow h1 {
@@ -221,13 +221,12 @@
 
 .headerRow p {
   margin: 4px 0 0;
-  color: rgba(30, 41, 59, 0.7);
 }
 
 .tableNote {
   margin-top: 6px;
   font-size: 12px;
-  color: rgba(100, 116, 139, 0.8);
+  color: rgba(100, 116, 139, 0.9);
 }
 
 .refreshButton {
@@ -237,8 +236,9 @@
   padding: 8px 16px;
   font-size: 14px;
   font-weight: 600;
-  background: rgba(241, 245, 249, 0.7);
-  color: rgba(30, 41, 59, 0.8);
+  /* background: rgba(241, 245, 249, 0.7); */
+  background: var(--gradient-blue);
+  color: var(--color-white);
   cursor: pointer;
   transition: background 0.2s ease;
 }
@@ -248,14 +248,12 @@
   cursor: progress;
 }
 
-.refreshButton:not(:disabled):hover {
-  background: rgba(148, 163, 184, 0.2);
-}
 
 .tableWrapper {
   border: 1px solid rgba(148, 163, 184, 0.35);
   border-radius: 20px;
-  background: rgba(255, 255, 255, 0.9);
+	background: linear-gradient(#141414, #141414) padding-box, var(--gradient-blue);
+
   box-shadow:
     0 18px 50px rgba(15, 23, 42, 0.1),
     0 6px 18px rgba(15, 23, 42, 0.05);
@@ -282,15 +280,14 @@
 }
 
 .table th {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: rgba(71, 85, 105, 0.8);
   position: sticky;
   top: 0;
   z-index: 2;
-  background: rgba(241, 245, 249, 0.95);
+	background: linear-gradient(#141414, #141414) padding-box, var(--gradient-blue);
 }
 
 .table thead th:first-of-type {
@@ -488,84 +485,9 @@
 .headerLabel {
   display: inline-flex;
   align-items: center;
+
 }
 
-.infoWrapper {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: transparent;
-  cursor: help;
-  outline: none;
-}
-
-.infoWrapper:focus-visible {
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.35);
-  border-radius: 50%;
-}
-
-.infoIcon {
-  width: 16px;
-  height: 16px;
-  display: block;
-}
-
-.infoTooltip {
-  position: absolute;
-  top: calc(100% + 10px);
-  left: 50%;
-  transform: translate(-50%, 4px);
-  min-width: 220px;
-  max-width: 260px;
-  padding: 12px 14px;
-  border-radius: 10px;
-  background: rgba(15, 23, 42, 0.94);
-  color: #f8fafc;
-  font-size: 12px;
-  line-height: 1.4;
-  box-shadow:
-    0 12px 30px rgba(15, 23, 42, 0.28),
-    0 4px 12px rgba(15, 23, 42, 0.18);
-  opacity: 0;
-  pointer-events: none;
-  transition:
-    opacity 0.18s ease,
-    transform 0.18s ease;
-  z-index: 20;
-}
-
-.infoTooltip::after {
-  content: "";
-  position: absolute;
-  top: -6px;
-  left: 50%;
-  transform: translateX(-50%);
-  border-width: 6px;
-  border-style: solid;
-  border-color: transparent transparent rgba(15, 23, 42, 0.94) transparent;
-}
-
-.infoWrapper:hover .infoTooltip,
-.infoWrapper:focus .infoTooltip {
-  opacity: 1;
-  transform: translate(-50%, 0);
-  pointer-events: auto;
-}
-
-.infoTooltipLink {
-  display: inline-block;
-  margin-top: 6px;
-  color: #bfdbfe;
-  font-weight: 600;
-}
-
-.infoTooltipLink:hover {
-  color: #93c5fd;
-}
 
 .emptyState,
 .errorCard {
@@ -602,6 +524,7 @@
     0 20px 55px rgba(15, 23, 42, 0.2),
     0 12px 24px rgba(15, 23, 42, 0.1);
   display: flex;
+  color: black;
   flex-direction: column;
 }
 
