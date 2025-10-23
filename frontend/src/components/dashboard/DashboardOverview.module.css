@@ -1,0 +1,231 @@
+.overview {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+
+.section {
+	padding-top: 25px;
+  padding: 15px;
+  display: flex;
+	flex-direction: column;
+	gap: 5px;
+	border-radius: 20px;
+	border-width: 1px 1px 3px 1px;
+	border-style: solid;
+	border-color: transparent;
+	background: linear-gradient(#141414, #141414) padding-box, var(--gradient-blue);
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.sectionCaption {
+  font-size: 13px;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+}
+
+.statCard, .securityCard {
+  border-radius: 14px;
+  padding: 16px 18px;
+  box-shadow: 0 2px 0 1px rgba(0, 0, 0, .12) inset, 0 1px 10px 1px rgba(255, 255, 255, .06) inset;
+  background: var(--gradient-gray);
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+}
+
+.statLabel {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.statValue {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.trend {
+  font-size: 12px;
+  color: rgb(3, 255, 95);
+  font-weight: 600;
+}
+
+.trendNegative {
+  color: rgb(254, 0, 0);
+  font-weight: 600;
+}
+
+.chartRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: stretch;
+}
+
+.chartCard {
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(248, 250, 252, 0.8);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+}
+
+.languageList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: center;
+}
+
+.languageItem {
+  display: grid;
+  grid-template-columns: 14px auto auto;
+  gap: 12px;
+  align-items: center;
+  font-size: 14px;
+
+}
+
+.languageBadge {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.languageLabel {
+  font-weight: 600;
+}
+
+.languageValue {
+  justify-self: end;
+  font-weight: 500;
+}
+
+.timelineGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.securityGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.securityLabel {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+
+
+}
+
+.securityValue {
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.problematicList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.problematicItem {
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  border-radius: 14px;
+  background: rgba(248, 113, 113, 0.08);
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+
+.problematicItem ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  font-size: 13px;
+}
+
+.problematicItem a {
+  font-weight: 600;
+  color: rgba(239, 68, 68, 0.9);
+  text-decoration: none;
+}
+
+.problematicItem a:hover {
+  text-decoration: underline;
+}
+
+.emptyState {
+  border: 1px dashed rgba(148, 163, 184, 0.5);
+  border-radius: 14px;
+  padding: 28px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.skeletonRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+}
+
+.skeletonBlock {
+  height: 58px;
+  border-radius: 14px;
+  background: linear-gradient(
+    90deg,
+    rgba(226, 232, 240, 0.6),
+    rgba(226, 232, 240, 0.25),
+    rgba(226, 232, 240, 0.6)
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (max-width: 960px) {
+  .section {
+    padding: 20px 22px;
+  }
+
+  .chartRow {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,382 @@
+.shell {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 32px 40px 48px;
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.headerTop {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+
+.headerTop h1 {
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.headerTop p {
+  color: rgba(30, 41, 59, 0.75);
+  max-width: 720px;
+  line-height: 1.4;
+}
+
+.summaryBar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 14px;
+  padding: 14px 20px;
+  background: rgba(241, 245, 249, 0.4);
+  font-size: 14px;
+  color: rgba(30, 41, 59, 0.75);
+}
+
+.summaryBar strong {
+  margin-right: 8px;
+}
+
+.summaryBar button {
+  appearance: none;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  border-radius: 999px;
+  padding: 6px 14px;
+  background: white;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.summaryBar button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: minmax(280px, 320px) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.actionsPanel,
+.tablePanel,
+.summaryPanel {
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow:
+    0 15px 40px rgba(15, 23, 42, 0.08),
+    0 3px 12px rgba(15, 23, 42, 0.05);
+}
+
+.actionsPanel {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.actionsPanel h2 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formGroup label {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(30, 41, 59, 0.7);
+}
+
+.formGrid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+
+.formGroup input {
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  padding: 10px 14px;
+  font-size: 14px;
+}
+
+.checkboxRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.checkboxRow label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: rgba(30, 41, 59, 0.8);
+}
+
+.divider {
+  border: none;
+  height: 1px;
+  background: rgba(148, 163, 184, 0.35);
+  margin: 8px 0;
+}
+
+.applyButton {
+  appearance: none;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 1), rgba(59, 130, 246, 0.9));
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px;
+  cursor: pointer;
+}
+
+.applyButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.errorText {
+  color: rgba(239, 68, 68, 0.85);
+  font-size: 13px;
+}
+
+.successText {
+  color: rgba(34, 197, 94, 0.9);
+  font-size: 13px;
+}
+
+.tablePanel {
+  grid-column: 2;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tablePanel h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.tablePanel p {
+  color: rgba(71, 85, 105, 0.8);
+  font-size: 14px;
+}
+
+.tableHeader {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.sortControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sortControls select,
+.sortControls button {
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  padding: 6px 10px;
+  font-size: 13px;
+  background: white;
+  cursor: pointer;
+}
+
+.tableScroll {
+  overflow-x: auto;
+}
+
+.policyTable {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 920px;
+  font-size: 13px;
+}
+
+.policyTable thead th,
+.policyTable tbody td {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+  text-align: left;
+}
+
+.policyTable thead th {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(30, 41, 59, 0.7);
+}
+
+.policyTable tbody tr:last-of-type td {
+  border-bottom: none;
+}
+
+.rowHighlight {
+  background: rgba(59, 130, 246, 0.1);
+  transition: background 0.3s ease;
+}
+
+.repoCell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.repoCell strong {
+  font-weight: 600;
+}
+
+.repoLink {
+  font-size: 12px;
+  color: rgba(37, 99, 235, 0.85);
+}
+
+.summaryPanel {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.summaryPanel h3 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.summaryCard {
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(248, 250, 252, 0.6);
+}
+
+.summaryCard span {
+  font-weight: 600;
+  color: rgba(30, 41, 59, 0.75);
+}
+
+.summaryCard ul {
+  margin: 0;
+  padding-left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.emptyState,
+.errorCard {
+  border-radius: 18px;
+  border: 1px dashed rgba(148, 163, 184, 0.6);
+  padding: 28px;
+  text-align: center;
+  color: rgba(71, 85, 105, 0.9);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.errorCard {
+  border-style: solid;
+  border-color: rgba(239, 68, 68, 0.4);
+  color: rgba(239, 68, 68, 0.95);
+}
+
+.errorText,
+.successText {
+  font-size: 13px;
+}
+
+.booleanYes {
+  color: rgba(34, 197, 94, 0.9);
+  font-weight: 600;
+}
+
+.booleanNo {
+  color: rgba(239, 68, 68, 0.85);
+  font-weight: 600;
+}
+
+.booleanUnknown {
+  color: rgba(148, 163, 184, 0.85);
+  font-style: italic;
+}
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 2px solid rgba(148, 163, 184, 0.5);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+}
+
+.checkboxAll {
+  background: rgba(34, 197, 94, 0.95);
+  border-color: rgba(34, 197, 94, 1);
+}
+
+.checkboxPartial {
+  background: rgba(251, 191, 36, 0.95);
+  border-color: rgba(251, 191, 36, 1);
+}
+
+.checkboxNone {
+  background: rgba(148, 163, 184, 0.4);
+  border-color: rgba(148, 163, 184, 0.6);
+}
+
+@media (max-width: 960px) {
+  .shell {
+    padding: 24px 20px 40px;
+  }
+
+  .contentGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .tablePanel {
+    grid-column: auto;
+  }
+
+  .summaryPanel {
+    grid-column: auto;
+  }
+}

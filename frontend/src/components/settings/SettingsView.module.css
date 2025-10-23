@@ -1,0 +1,147 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.card {
+  padding-top: 25px;
+  padding: 15px;
+  display: flex;
+	flex-direction: column;
+  overflow: hidden;
+	gap: 5px;
+	border-radius: 20px;
+	border-width: 1px 1px 3px 1px;
+	border-style: solid;
+	border-color: transparent;
+	background: linear-gradient(#141414, #141414) padding-box, var(--gradient-blue);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: clamp(26px, 4vw, 34px);
+  font-weight: 600;
+}
+
+.header p {
+  margin: 0;
+  color: rgba(71, 85, 105, 0.8);
+  font-size: 14px;
+}
+
+.formGrid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formGroup label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.formGroup input {
+  display: block;
+	width: 100%;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: solid transparent;
+  border-width: 0.5px 1px 2px 0.5px;
+  background: linear-gradient(#141414, #141414) padding-box, var(--gradient-blue-reverse);
+  font-size: 13px;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  color: var(--color-white);
+}
+
+.formGroup input:disabled {
+  background: rgba(241, 245, 249, 0.8);
+  color: rgba(100, 116, 139, 0.9);
+}
+
+.fieldErrorLabel {
+  color: rgba(220, 38, 38, 0.9);
+}
+
+.fieldErrorInput {
+  border-color: rgba(248, 113, 113, 0.75);
+  box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.4);
+}
+
+.checkboxRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.checkboxRow label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.primaryButton,
+.secondaryButton {
+  appearance: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 10px 20px;
+  cursor: pointer;
+  border: none;
+}
+
+.primaryButton {
+  background: var(--gradient-blue);
+  color: var(--color-white);
+  box-shadow:
+    0 12px 24px rgba(37, 99, 235, 0.25),
+    0 4px 12px rgba(37, 99, 235, 0.18);
+}
+
+.primaryButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.secondaryButton {
+  background: var(--gradient-gray);
+}
+
+.errorBanner {
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: rgba(248, 113, 113, 0.18);
+  color: rgba(153, 27, 27, 0.95);
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  font-size: 13px;
+}
+
+.infoFooter {
+  font-size: 13px;
+}

@@ -1,0 +1,129 @@
+.infoTooltipPortal {
+  position: fixed;
+  z-index: 99999; 
+  min-width: 220px;
+  max-width: 260px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.94);
+  color: #f8fafc;
+  font-size: 12px;
+  line-height: 1.4;
+  box-shadow:
+    0 12px 30px rgba(15, 23, 42, 0.28),
+    0 4px 12px rgba(15, 23, 42, 0.18);
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  opacity: 1;
+}
+.infoTooltipPortal {
+  position: fixed;
+  z-index: 99999;
+  min-width: 220px;
+  max-width: 260px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.94);
+  color: #f8fafc;
+  font-size: 12px;
+  line-height: 1.4;
+  box-shadow:
+    0 12px 30px rgba(15, 23, 42, 0.28),
+    0 4px 12px rgba(15, 23, 42, 0.18);
+  pointer-events: auto;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  opacity: 1;
+}
+
+.infoTooltipHoverArea {
+  position: absolute;
+  top: -10px;
+  left: 0;
+  right: 0;
+  height: 12px;
+  background: transparent;
+}
+.infoIcon {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+
+.infoTooltip {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translate(-50%, 4px);
+  min-width: 220px;
+  max-width: 260px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.94);
+  color: #f8fafc;
+  font-size: 12px;
+  line-height: 1.4;
+  box-shadow:
+    0 12px 30px rgba(15, 23, 42, 0.28),
+    0 4px 12px rgba(15, 23, 42, 0.18);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+  z-index: 20;
+}
+
+.infoTooltip::after {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: transparent transparent rgba(15, 23, 42, 0.94) transparent;
+}
+
+.infoTooltipLink {
+  display: inline-block;
+  margin-top: 6px;
+  color: #bfdbfe;
+  font-weight: 600;
+}
+
+.infoTooltipLink:hover {
+  color: #93c5fd;
+}
+
+
+.infoWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: transparent;
+  cursor: help;
+  outline: none;
+  z-index: 999999;
+  
+}
+
+.infoWrapper:focus-visible {
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.35);
+  border-radius: 50%;
+}
+
+
+
+
+.infoWrapper:hover .infoTooltip,
+.infoWrapper:focus .infoTooltip {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+

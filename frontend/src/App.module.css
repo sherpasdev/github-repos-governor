@@ -1,0 +1,182 @@
+.appShell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 40%),
+    radial-gradient(circle at bottom right, rgba(236, 72, 153, 0.08), transparent 45%),
+    var(--background);
+  color: var(--foreground);
+}
+
+.topNav {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  padding: 0px 32px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+  backdrop-filter: blur(6px);
+  background: var(--color-black);
+  padding-bottom: 20px;
+
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  div {
+    display: flex;
+    align-items:center;
+    gap: 20px;
+  }
+}
+
+.brandName {
+  font-size: clamp(20px, 2.4vw, 22px);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.brandVersion {
+  width: fit-content;
+  display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 6px 20px;
+	border-radius: 100px;
+	border: 1px solid var(--color-gray-250);
+	background: rgba(255, 255, 255, .01);
+	box-shadow: 0 2px 9px 1px rgba(255, 255, 255, .05) inset;
+  font-size: 12px;
+}
+
+.navLinks {
+  display: flex;
+  gap: 12px;
+  justify-self: end;
+}
+
+.navNotification {
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.navNotification span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  max-width: 520px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow:
+    0 10px 20px rgba(15, 23, 42, 0.12),
+    0 4px 10px rgba(15, 23, 42, 0.08);
+}
+
+.navNotificationSuccess {
+  background: rgba(16, 185, 129, 0.16);
+  color: rgba(4, 120, 87, 0.95);
+}
+
+.navNotificationError {
+  background: rgba(248, 113, 113, 0.2);
+  color: rgba(153, 27, 27, 0.95);
+}
+
+
+
+.link {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+  font-size: 12px;
+	padding: 12px 16px;
+	font-weight: 400;
+  border-radius: 16px;
+	border-width: .5px .5px 3.5px 0;
+	border-style: solid;
+	border-color: transparent;
+	will-change: auto;
+
+		&:hover {
+			border-color: var(--color-cadetblue);
+      cursor: pointer;
+	}
+}
+
+
+
+.active {
+  border-radius: 16px;
+	padding: 12px 16px;
+
+  border-color: var(--color-cadetblue);
+  background-color: var(--color-gray-400);
+}
+
+.mainContent {
+  flex: 1 1 auto;
+  padding: 24px 40px 48px;
+}
+
+.centerPane {
+  min-height: 100vh;
+  display: flex;
+  
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(236, 72, 153, 0.08));
+}
+
+.loading {
+  font-size: 18px;
+  font-weight: 600;
+  color: rgba(30, 41, 59, 0.8);
+}
+
+.errorCard {
+  border-radius: 18px;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 32px 28px;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: rgba(220, 38, 38, 0.95);
+  text-align: center;
+}
+
+.errorCard h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.errorCard p {
+  color: rgba(30, 41, 59, 0.75);
+}
+
+.errorCard button {
+  align-self: center;
+  appearance: none;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  border-radius: 10px;
+  padding: 8px 16px;
+  background: rgba(241, 245, 249, 0.6);
+  color: rgba(30, 41, 59, 0.85);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.errorCard button:hover {
+  background: rgba(148, 163, 184, 0.2);
+}

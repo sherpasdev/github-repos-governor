@@ -1,0 +1,167 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  version:
+    name: Determine Version
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.bump.outputs.tag }}
+      version: ${{ steps.bump.outputs.version }}
+    steps:
+      - name: Determine next minor version
+        id: bump
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const {owner, repo} = context.repo;
+            const tags = await github.paginate(github.rest.repos.listTags, {
+              owner,
+              repo,
+              per_page: 100
+            });
+
+            const semverRegex = /^v?(\d+)\.(\d+)\.(\d+)$/;
+            let highest = null;
+
+            for (const tag of tags) {
+              const match = semverRegex.exec(tag.name);
+              if (!match) {
+                continue;
+              }
+              const current = {
+                major: Number(match[1]),
+                minor: Number(match[2]),
+                patch: Number(match[3])
+              };
+
+              if (!highest) {
+                highest = current;
+                continue;
+              }
+
+              if (
+                current.major > highest.major ||
+                (current.major === highest.major && current.minor > highest.minor) ||
+                (current.major === highest.major && current.minor === highest.minor && current.patch > highest.patch)
+              ) {
+                highest = current;
+              }
+            }
+
+            const next = highest
+              ? {major: highest.major, minor: highest.minor + 1, patch: 0}
+              : {major: 0, minor: 1, patch: 0};
+
+            const tagName = `v${next.major}.${next.minor}.${next.patch}`;
+            core.setOutput('tag', tagName);
+            const version = `${next.major}.${next.minor}.${next.patch}`;
+            core.setOutput('version', version);
+
+  build:
+    name: Build ${{ matrix.display }}
+    needs: version
+    runs-on: ${{ matrix.os }}
+    env:
+      APP_VERSION: ${{ needs.version.outputs.version }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            display: Linux
+            artifact_name: github-repos-governor-linux-amd64
+          - os: macos-latest
+            display: macOS
+            artifact_name: github-repos-governor-macos-amd64
+          - os: windows-latest
+            display: Windows
+            artifact_name: github-repos-governor-windows-amd64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          check-latest: true
+          cache: true
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: frontend
+      - name: Install Wails CLI
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+      - name: Build application (Unix)
+        if: runner.os != 'Windows'
+        run: |
+          VERSION="${APP_VERSION:-dev}"
+          wails build -clean -ldflags "-X main.version=${VERSION}"
+      - name: Build application (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          $version = if ($Env:APP_VERSION) { $Env:APP_VERSION } else { "dev" }
+          wails build -clean -ldflags "-X main.version=$version"
+        shell: pwsh
+      - name: Package artifact (Unix)
+        if: runner.os != 'Windows'
+        run: |
+          VERSION="${APP_VERSION:-dev}"
+          mkdir -p dist
+          tar -czf "dist/${{ matrix.artifact_name }}-${VERSION}.tar.gz" -C build/bin .
+      - name: Package artifact (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          $version = if ($Env:APP_VERSION) { $Env:APP_VERSION } else { "dev" }
+          New-Item -ItemType Directory -Path dist | Out-Null
+          $archive = "dist\\${{ matrix.artifact_name }}-$version.zip"
+          Compress-Archive -Path build\bin\* -DestinationPath $archive
+        shell: pwsh
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}-${{ needs.version.outputs.version }}
+          path: dist/*
+          if-no-files-found: error
+
+  release:
+    name: Create Release
+    needs:
+      - version
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+      - name: Collect release assets
+        run: |
+          mkdir -p release
+          shopt -s nullglob
+          for dir in dist/*; do
+            for file in "$dir"/*; do
+              cp "$file" release/
+            done
+          done
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.version.outputs.tag }}
+          name: Release ${{ needs.version.outputs.tag }}
+          files: release/**
+          generate_release_notes: true

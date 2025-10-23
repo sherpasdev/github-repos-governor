@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1296269,
+    "name": "Hello-World",
+    "full_name": "octocat/Hello-World",
+    "html_url": "https://github.com/octocat/Hello-World",
+    "description": "This your first repo!",
+    "language": "Ruby",
+    "default_branch": "master",
+    "pushed_at": "2024-01-04T14:15:22Z",
+    "updated_at": "2024-01-04T14:10:00Z",
+    "created_at": "2011-01-26T19:01:12Z",
+    "stargazers_count": 1500,
+    "watchers_count": 1500,
+    "forks_count": 9,
+    "open_issues_count": 0,
+    "topics": ["octocat", "atom", "electron", "api"],
+    "allow_auto_merge": true,
+    "allow_update_branch": true,
+    "delete_branch_on_merge": true,
+    "security_and_analysis": {
+      "dependabot_security_updates": {"status": "enabled"},
+      "advanced_security": {"status": "enabled_on"},
+      "dependency_graph": {"status": "enabled_managed"},
+      "secret_scanning": {"status": "enabled"},
+      "secret_scanning_push_protection": {"status": "enabled"}
+    }
+  },
+  {
+    "id": 999999,
+    "name": "legacy-app",
+    "full_name": "acme/legacy-app",
+    "html_url": "https://github.com/acme/legacy-app",
+    "description": null,
+    "language": "Go",
+    "default_branch": "main",
+    "pushed_at": "2023-12-24T00:00:00Z",
+    "updated_at": "2023-12-20T12:00:00Z",
+    "created_at": "2018-05-10T08:00:00Z",
+    "stargazers_count": 42,
+    "watchers_count": 42,
+    "forks_count": 4,
+    "open_issues_count": 2,
+    "topics": ["go", "legacy"],
+    "allow_auto_merge": false,
+    "allow_update_branch": false,
+    "delete_branch_on_merge": false,
+    "security_and_analysis": {
+      "dependabot_security_updates": {"status": "disabled"},
+      "advanced_security": {"status": "disabled_by_org_policy"},
+      "dependency_graph": {"status": "not_available"},
+      "secret_scanning": {"status": "disabled"},
+      "secret_scanning_push_protection": {"status": "disabled"}
+    }
+  }
+]
